@@ -1,0 +1,26 @@
+node_modules/
+.DS_Store
+*.log
+build/
+.cache/
+public/build/
+
+# Prisma
+*.db
+*.sqlite
+*.sqlite-journal
+dev.sqlite
+
+# Environment
+.env
+.env.local
+.env*.local
+
+# Shopify
+.shopify/
+
+# Vercel
+.vercel/
+
+# TypeScript
+*.tsbuildinfo

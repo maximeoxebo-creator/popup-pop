@@ -1,0 +1,50 @@
+{
+  "name": "popup-pop",
+  "private": true,
+  "scripts": {
+    "build": "prisma generate && remix vite:build",
+    "dev": "shopify app dev",
+    "config:link": "shopify app config link",
+    "generate": "shopify app generate",
+    "deploy": "shopify app deploy",
+    "config:use": "shopify app config use",
+    "env": "shopify app env",
+    "start": "remix-serve ./build/server/index.js",
+    "setup": "prisma generate && prisma migrate deploy",
+    "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev --name init",
+    "prisma:studio": "prisma studio"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=18.20.0 <21"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.19.0",
+    "@remix-run/node": "^2.13.1",
+    "@remix-run/react": "^2.13.1",
+    "@remix-run/serve": "^2.13.1",
+    "@shopify/app-bridge-react": "^4.1.6",
+    "@shopify/polaris": "^12.27.0",
+    "@shopify/shopify-app-remix": "^3.3.0",
+    "@shopify/shopify-app-session-storage-prisma": "^5.1.4",
+    "isbot": "^4.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@remix-run/dev": "^2.13.1",
+    "@shopify/api-codegen-preset": "^1.1.1",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.31",
+    "@types/react-dom": "^18.2.14",
+    "prisma": "^5.19.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.1.3",
+    "vite-tsconfig-paths": "^4.3.1"
+  },
+  "workspaces": [
+    "extensions/*"
+  ]
+}

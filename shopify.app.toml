@@ -1,0 +1,32 @@
+name = "popup-pop"
+
+# ⚠️  Remplace par ton vrai Client ID après avoir créé l'app sur Shopify Partners
+client_id = "REMPLACE_PAR_TON_CLIENT_ID"
+
+application_url = "https://popup-pop.vercel.app"
+
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "simple-popup-test.myshopify.com"
+
+[access_scopes]
+scopes = "write_products,write_metaobjects,write_metaobject_definitions"
+
+[auth]
+redirect_urls = [
+  "https://popup-pop.vercel.app/auth/callback",
+  "https://popup-pop.vercel.app/auth"
+]
+
+[webhooks]
+api_version = "2024-10"
+
+[pos]
+embedded = false
+
+[[extensions]]
+type = "theme"
+name = "popup-pop-extension"
+handle = "popup-pop-extension"
