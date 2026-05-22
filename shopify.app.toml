@@ -1,12 +1,11 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "36258e9b96319d13c87a537487b91859"
-application_url = "https://popup-pop.vercel.app"
+application_url = "https://popup-pop.vercel.app/app"
 embedded = true
 name = "popup-pop"
 
 [access_scopes]
-# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
 scopes = "write_metaobject_definitions,write_metaobjects,write_products"
 optional_scopes = [ ]
 use_legacy_install_flow = false
@@ -19,3 +18,8 @@ redirect_urls = [
 
 [webhooks]
 api_version = "2026-04"
+
+[[extensions]]
+type = "theme"
+name = "popup-pop-extension"
+handle = "popup-pop-extension"
