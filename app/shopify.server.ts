@@ -2,10 +2,14 @@ import "@shopify/shopify-app-remix/adapters/node";
 import {
   ApiVersion,
   AppDistribution,
+  BillingInterval,
   shopifyApp,
 } from "@shopify/shopify-app-remix/server";
 import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
 import prisma from "~/db.server";
+
+// ✅ Nom du plan — doit correspondre exactement au handle dans le Partners Dashboard
+export const MONTHLY_PLAN = "monthly";
 
 const shopify = shopifyApp({
   apiKey: process.env.SHOPIFY_API_KEY,
@@ -17,6 +21,19 @@ const shopify = shopifyApp({
   sessionStorage: new PrismaSessionStorage(prisma),
   distribution: AppDistribution.AppStore,
   future: { unstable_newEmbeddedAuthStrategy: true },
+
+  // ✅ Billing — abonnement mensuel à 19.99$
+  billing: {
+    [MONTHLY_PLAN]: {
+      lineItems: [
+        {
+          amount: 19.99,
+          currencyCode: "USD",
+          interval: BillingInterval.Every30Days,
+        },
+      ],
+    },
+  },
 });
 
 export default shopify;

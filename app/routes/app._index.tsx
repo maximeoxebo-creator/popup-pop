@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { useLoaderData, useSubmit, useNavigation } from "@remix-run/react";
 import {
   Page,
@@ -14,13 +14,28 @@ import {
   InlineStack,
   Divider,
 } from "@shopify/polaris";
-import { authenticate } from "~/shopify.server";
+import { authenticate, MONTHLY_PLAN } from "~/shopify.server";
 import prisma from "~/db.server";
 import { useState, useCallback } from "react";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { session } = await authenticate.admin(request);
+  const { session, billing } = await authenticate.admin(request);
   const shop = session.shop;
+
+  // ✅ Vérification de l'abonnement
+  const { hasActivePayment, appSubscriptions } = await billing.check({
+    plans: [MONTHLY_PLAN],
+    isTest: false, // passer à false en production
+  });
+
+  // ✅ Si pas d'abonnement actif → redirection vers la page de paiement
+  if (!hasActivePayment) {
+    await billing.request({
+      plan: MONTHLY_PLAN,
+      isTest: false, // passer à false en production
+      returnUrl: `${process.env.SHOPIFY_APP_URL}/app`,
+    });
+  }
 
   let settings = await prisma.popupSettings.findUnique({ where: { shop } });
 
@@ -28,7 +43,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     settings = await prisma.popupSettings.create({ data: { shop } });
   }
 
-  return json({ settings });
+  return json({ settings, hasActivePayment, appSubscriptions });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -50,7 +65,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
-  const { settings } = useLoaderData<typeof loader>();
+  const { settings, hasActivePayment } = useLoaderData<typeof loader>();
   const submit = useSubmit();
   const navigation = useNavigation();
   const isSaving = navigation.state === "submitting";
@@ -70,29 +85,33 @@ export default function Index() {
   return (
     <Page title="Popup Pop">
       <Layout>
-        <Layout.Section>
-          <Banner title="Comment activer le popup ?" tone="info">
-            <p>
-              Allez dans <strong>Boutique en ligne → Thèmes → Personnaliser</strong>,
-              puis ajoutez le bloc <strong>"Popup Pop"</strong> à votre thème.
-            </p>
-          </Banner>
-        </Layout.Section>
+        {hasActivePayment && (
+          <Layout.Section>
+            <Banner title="How to activate your popup?" tone="info">
+              <p>
+                Go to <strong>Online Store → Themes → Customize</strong>, then
+                add the <strong>"Popup Pop"</strong> block to your theme.
+              </p>
+            </Banner>
+          </Layout.Section>
+        )}
 
         <Layout.Section>
           <Card>
             <BlockStack gap="400">
               <InlineStack align="space-between" blockAlign="center">
-                <Text variant="headingMd" as="h2">Paramètres du Popup</Text>
+                <Text variant="headingMd" as="h2">
+                  Popup Settings
+                </Text>
                 <Badge tone={isActive ? "success" : "critical"}>
-                  {isActive ? "Actif" : "Inactif"}
+                  {isActive ? "Active" : "Inactive"}
                 </Badge>
               </InlineStack>
 
               <Divider />
 
               <TextField
-                label="Titre du popup"
+                label="Popup title"
                 value={title}
                 onChange={setTitle}
                 autoComplete="off"
@@ -100,7 +119,7 @@ export default function Index() {
               />
 
               <TextField
-                label="Message du popup"
+                label="Popup message"
                 value={message}
                 onChange={setMessage}
                 multiline={3}
@@ -114,11 +133,15 @@ export default function Index() {
                   tone={isActive ? "critical" : undefined}
                   onClick={() => setIsActive(!isActive)}
                 >
-                  {isActive ? "Désactiver" : "Activer le popup"}
+                  {isActive ? "Disable popup" : "Enable popup"}
                 </Button>
 
-                <Button variant="primary" loading={isSaving} onClick={handleSave}>
-                  Enregistrer
+                <Button
+                  variant="primary"
+                  loading={isSaving}
+                  onClick={handleSave}
+                >
+                  Save
                 </Button>
               </InlineStack>
             </BlockStack>
