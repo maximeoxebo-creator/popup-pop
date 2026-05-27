@@ -12,5 +12,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   if (!settings || !settings.isActive) return json({ active: false });
 
-  return json({ active: true, title: settings.title, message: settings.message });
+  return json({
+    active: true,
+    title: settings.title,
+    message: settings.message,
+    colorStart: settings.colorStart,
+    colorEnd: settings.colorEnd,
+  });
 };
