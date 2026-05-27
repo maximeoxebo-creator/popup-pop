@@ -6,7 +6,7 @@ embedded = true
 name = "popup-pop"
 
 [access_scopes]
-scopes = "write_metaobject_definitions,write_metaobjects,write_products,read_purchases"
+scopes = "write_metaobject_definitions,write_metaobjects,write_products"
 optional_scopes = [ ]
 use_legacy_install_flow = false
 
@@ -22,4 +22,4 @@ api_version = "2026-04"
 [[extensions]]
 type = "theme"
 name = "popup-pop-extension"
-handle = "popup-pop-extension"
+handle = "popup-pop-extension-v2"
