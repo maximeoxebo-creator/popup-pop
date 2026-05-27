@@ -1,31 +1,7 @@
-api_version = "2024-10"
+api_version = "2026-04"
 uid = "e41f51e5-5f41-1951-1575-4a9ba47116c3fad0a85f"
 
 [[extensions]]
 type = "theme"
 name = "Popup Pop"
 handle = "popup-pop-extension"
-
-  [[extensions.settings.fields]]
-  key = "popup_title"
-  type = "single_line_text_field"
-  name = "Popup Title"
-  label = "Popup Title"
-
-  [[extensions.settings.fields]]
-  key = "popup_message"
-  type = "multi_line_text_field"
-  name = "Popup Message"
-  label = "Popup Message"
-
-  [[extensions.settings.fields]]
-  key = "popup_enabled"
-  type = "boolean"
-  name = "Enable Popup"
-  label = "Enable Popup"
-
-  [[extensions.settings.fields]]
-  key = "button_text"
-  type = "single_line_text_field"
-  name = "Button Text"
-  label = "Button Text"
