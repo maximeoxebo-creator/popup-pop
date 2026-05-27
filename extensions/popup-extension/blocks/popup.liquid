@@ -1,19 +1,14 @@
 {% comment %}
   Popup Pop - Theme App Extension Block
-  - Titre/message synchronisés depuis l'app admin (DB)
-  - Fallback sur les settings du bloc si l'API est indisponible
-  - Couleurs personnalisables dans le customizer
+  v2 - JS externalisé pour contourner le cache CDN Shopify
 {% endcomment %}
 
 {% if block.settings.popup_enabled %}
   <div
     id="popup-pop-overlay"
-    class="popup-pop-overlay"
+    class="popup-pop-overlay hidden"
     data-popup-block="{{ block.id }}"
     data-app-url="{{ block.settings.app_url | default: 'https://popup-pop.vercel.app' }}"
-    data-fallback-title="{{ block.settings.popup_title | escape }}"
-    data-fallback-message="{{ block.settings.popup_message | escape }}"
-    data-fallback-button="{{ block.settings.button_text | escape }}"
     style="display: none;"
   >
     <div class="popup-pop-modal" role="dialog" aria-modal="true" aria-labelledby="popup-pop-title">
@@ -32,7 +27,7 @@
       </div>
       <div class="popup-pop-footer">
         <button class="popup-pop-button" id="popup-pop-cta" type="button">
-          {{ block.settings.button_text | default: "Shop Now" }}
+          {{ block.settings.button_text | default: "Shop Now!" }}
         </button>
       </div>
     </div>
@@ -142,65 +137,8 @@
     }
   </style>
 
-  <script>
-    (function() {
-      var KEY = 'popup_pop_shown_{{ block.id }}';
-      var overlay = document.getElementById('popup-pop-overlay');
-      var closeBtn = document.getElementById('popup-pop-close');
-      var ctaBtn = document.getElementById('popup-pop-cta');
-      var titleEl = overlay ? overlay.querySelector('.popup-pop-title') : null;
-      var messageEl = overlay ? overlay.querySelector('.popup-pop-message') : null;
-      var shop = window.Shopify && window.Shopify.shop ? window.Shopify.shop : location.hostname;
-      var appUrl = overlay ? overlay.getAttribute('data-app-url') : 'https://popup-pop.vercel.app';
+  {{ 'popup-pop-v2.js' | asset_url | script_tag }}
 
-      if (sessionStorage.getItem(KEY)) return;
-
-      // ✅ Récupère le titre/message/couleurs depuis l'app admin (DB)
-      fetch(appUrl + '/api/popup-settings?shop=' + shop)
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-          if (!data.active) return; // popup désactivé depuis l'admin
-          if (data.title && titleEl) titleEl.textContent = data.title;
-          if (data.message && messageEl) messageEl.textContent = data.message;
-          if (data.colorStart && data.colorEnd) {
-            var gradient = 'linear-gradient(135deg, ' + data.colorStart + ' 0%, ' + data.colorEnd + ' 100%)';
-            var header = overlay.querySelector('.popup-pop-header');
-            var btn = overlay.querySelector('.popup-pop-button');
-            if (header) header.style.background = gradient;
-            if (btn) btn.style.background = gradient;
-          }
-          setTimeout(show, 1500);
-        })
-        .catch(function() {
-          // Fallback : utilise les settings du bloc thème
-          setTimeout(show, 1500);
-        });
-
-      function show() {
-        if (overlay) {
-          overlay.style.display = 'flex';
-          overlay.classList.remove('hidden');
-          sessionStorage.setItem(KEY, '1');
-        }
-      }
-
-      function hide() {
-        if (overlay) {
-          overlay.classList.add('hidden');
-          overlay.style.display = 'none';
-        }
-      }
-
-      if (closeBtn) closeBtn.addEventListener('click', hide);
-      if (ctaBtn) ctaBtn.addEventListener('click', hide);
-      if (overlay) overlay.addEventListener('click', function(e) {
-        if (e.target === overlay) hide();
-      });
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') hide();
-      });
-    })();
-  </script>
 {% endif %}
 
 {% schema %}
@@ -218,21 +156,21 @@
       "type": "text",
       "id": "popup_title",
       "label": "Popup Title (fallback)",
-      "info": "Used if the app admin is unavailable. Set your main title in the Popup Pop app.",
+      "info": "Used if the app admin is unavailable.",
       "default": "Welcome to our store!"
     },
     {
       "type": "textarea",
       "id": "popup_message",
       "label": "Popup Message (fallback)",
-      "info": "Used if the app admin is unavailable. Set your main message in the Popup Pop app.",
+      "info": "Used if the app admin is unavailable.",
       "default": "Get 10% off your first order. Use code WELCOME10"
     },
     {
       "type": "text",
       "id": "button_text",
       "label": "Button Text",
-      "default": "Shop Now"
+      "default": "Shop Now!"
     },
     {
       "type": "header",
@@ -280,4 +218,3 @@
   ]
 }
 {% endschema %}
-
