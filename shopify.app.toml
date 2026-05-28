@@ -18,8 +18,3 @@ redirect_urls = [
 
 [webhooks]
 api_version = "2026-04"
-
-[[extensions]]
-type = "theme"
-name = "popup-pop-extension"
-handle = "popup-pop-extension-v2"

@@ -1,11 +1,11 @@
-{% comment %} popup-pop v4 - inline JS {% endcomment %}
+{% comment %} popup-pop v5 {% endcomment %}
 {% if block.settings.popup_enabled %}
   <div
     id="popup-pop-overlay"
-    class="popup-pop-overlay hidden"
+    class="popup-pop-overlay"
     data-popup-block="{{ block.id }}"
     data-app-url="{{ block.settings.app_url | default: 'https://popup-pop.vercel.app' }}"
-    style="display: none;"
+    style="display:none;"
   >
     <div class="popup-pop-modal" role="dialog" aria-modal="true" aria-labelledby="popup-pop-title">
       <button class="popup-pop-close" id="popup-pop-close" aria-label="Close popup" type="button">&times;</button>
@@ -22,9 +22,7 @@
   </div>
 
   <style>
-    .popup-pop-overlay { position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:99999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px); }
-    .popup-pop-overlay.visible { display:flex; }
-    @keyframes ppFadeIn { from{opacity:0} to{opacity:1} }
+    .popup-pop-overlay { position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:99999;align-items:center;justify-content:center;backdrop-filter:blur(4px); }
     @keyframes ppSlideUp { from{opacity:0;transform:translateY(30px) scale(0.95)} to{opacity:1;transform:translateY(0) scale(1)} }
     .popup-pop-modal { background:#fff;border-radius:16px;max-width:480px;width:90%;position:relative;box-shadow:0 25px 60px rgba(0,0,0,0.3);animation:ppSlideUp 0.35s cubic-bezier(0.34,1.56,0.64,1);overflow:hidden; }
     .popup-pop-header { background:linear-gradient(135deg,{{ block.settings.color_start | default: "#667eea" }} 0%,{{ block.settings.color_end | default: "#764ba2" }} 100%);padding:32px 32px 24px; }
@@ -32,52 +30,68 @@
     .popup-pop-body { padding:24px 32px; }
     .popup-pop-message { color:#4a5568;font-size:16px;line-height:1.6;margin:0; }
     .popup-pop-footer { padding:8px 32px 32px; }
-    .popup-pop-button { display:block;width:100%;padding:14px 24px;background:linear-gradient(135deg,{{ block.settings.color_start | default: "#667eea" }} 0%,{{ block.settings.color_end | default: "#764ba2" }} 100%);color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:transform 0.15s ease,box-shadow 0.15s ease; }
+    .popup-pop-button { display:block;width:100%;padding:14px 24px;background:linear-gradient(135deg,{{ block.settings.color_start | default: "#667eea" }} 0%,{{ block.settings.color_end | default: "#764ba2" }} 100%);color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s; }
     .popup-pop-button:hover { transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,0.2); }
-    .popup-pop-close { position:absolute;top:12px;right:16px;background:rgba(255,255,255,0.2);border:none;color:#fff;font-size:24px;cursor:pointer;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background 0.15s ease;z-index:1; }
+    .popup-pop-close { position:absolute;top:12px;right:16px;background:rgba(255,255,255,0.2);border:none;color:#fff;font-size:24px;cursor:pointer;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background 0.15s;z-index:1; }
     .popup-pop-close:hover { background:rgba(255,255,255,0.35); }
     @media(max-width:480px){.popup-pop-modal{width:95%;margin:16px}.popup-pop-title{font-size:20px}.popup-pop-header,.popup-pop-body,.popup-pop-footer{padding-left:20px;padding-right:20px}}
   </style>
 
   <script>
-    /* popup-pop-v4 */
+    /* popup-pop-v5 */
     (function() {
       var overlay = document.getElementById('popup-pop-overlay');
       if (!overlay) return;
+
       var KEY = 'popup_pop_shown_' + overlay.getAttribute('data-popup-block');
       var appUrl = overlay.getAttribute('data-app-url') || 'https://popup-pop.vercel.app';
       var shop = window.Shopify && window.Shopify.shop ? window.Shopify.shop : location.hostname;
+
+      if (sessionStorage.getItem(KEY)) return;
+
       var closeBtn = document.getElementById('popup-pop-close');
       var ctaBtn = document.getElementById('popup-pop-cta');
       var titleEl = overlay.querySelector('.popup-pop-title');
       var messageEl = overlay.querySelector('.popup-pop-message');
+      var headerEl = overlay.querySelector('.popup-pop-header');
+      var btnEl = overlay.querySelector('.popup-pop-button');
 
-      if (sessionStorage.getItem(KEY)) return;
+      function show() {
+        overlay.style.display = 'flex';
+        sessionStorage.setItem(KEY, '1');
+      }
 
+      function hide() {
+        overlay.style.display = 'none';
+      }
+
+      function applyData(data) {
+        if (data.title && titleEl) titleEl.textContent = data.title;
+        if (data.message && messageEl) messageEl.textContent = data.message;
+        if (data.colorStart && data.colorEnd) {
+          var g = 'linear-gradient(135deg,' + data.colorStart + ' 0%,' + data.colorEnd + ' 100%)';
+          if (headerEl) headerEl.style.background = g;
+          if (btnEl) btnEl.style.background = g;
+        }
+      }
+
+      // Fetch data FIRST, then show popup with correct values
       fetch(appUrl + '/api/popup-settings?shop=' + shop)
         .then(function(res) { return res.json(); })
         .then(function(data) {
           if (!data.active) return;
-          if (data.title && titleEl) titleEl.textContent = data.title;
-          if (data.message && messageEl) messageEl.textContent = data.message;
-          if (data.colorStart && data.colorEnd) {
-            var g = 'linear-gradient(135deg,' + data.colorStart + ' 0%,' + data.colorEnd + ' 100%)';
-            var h = overlay.querySelector('.popup-pop-header');
-            var b = overlay.querySelector('.popup-pop-button');
-            if (h) h.style.background = g;
-            if (b) b.style.background = g;
-          }
+          applyData(data);
           setTimeout(show, 1500);
         })
-        .catch(function() { setTimeout(show, 1500); });
-
-      function show() { overlay.style.display='flex'; overlay.classList.add('visible'); sessionStorage.setItem(KEY,'1'); }
-      function hide() { overlay.style.display='none'; overlay.classList.remove('visible'); }
+        .catch(function() {
+          // Fallback: show with default values
+          setTimeout(show, 1500);
+        });
 
       if (closeBtn) closeBtn.addEventListener('click', hide);
       if (ctaBtn) ctaBtn.addEventListener('click', hide);
-      overlay.addEventListener('click', function(e) { if (e.target===overlay) hide(); });
-      document.addEventListener('keydown', function(e) { if (e.key==='Escape') hide(); });
+      overlay.addEventListener('click', function(e) { if (e.target === overlay) hide(); });
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') hide(); });
     })();
   </script>
 {% endif %}
