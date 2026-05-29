@@ -38,7 +38,7 @@
 
 <script>
   /* popup-pop-v5 */
-  (function() {
+  document.addEventListener("DOMContentLoaded", function() {
     var overlay = document.getElementById('popup-pop-overlay');
     if (!overlay) return;
     var appUrl = overlay.getAttribute('data-app-url') || 'https://popup-pop.vercel.app';
@@ -78,7 +78,7 @@
     if (ctaBtn) ctaBtn.addEventListener('click', hide);
     overlay.addEventListener('click', function(e) { if (e.target === overlay) hide(); });
     document.addEventListener('keydown', function(e) { if (e.key === 'Escape') hide(); });
-  })();
+  });
 </script>
 
 {% schema %}
