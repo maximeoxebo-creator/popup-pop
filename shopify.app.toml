@@ -23,14 +23,7 @@ api_version = "2026-04"
 topics = ["app/uninstalled"]
 uri = "/webhooks"
 
-[[webhooks.subscriptions]]
-topics = ["customers/data_request"]
-uri = "/webhooks"
-
-[[webhooks.subscriptions]]
-topics = ["customers/redact"]
-uri = "/webhooks"
-
-[[webhooks.subscriptions]]
-topics = ["shop/redact"]
-uri = "/webhooks"
+[privacy_compliance]
+customer_data_request_url = "https://popup-pop.vercel.app/webhooks"
+customer_deletion_url = "https://popup-pop.vercel.app/webhooks"
+shop_deletion_url = "https://popup-pop.vercel.app/webhooks"
