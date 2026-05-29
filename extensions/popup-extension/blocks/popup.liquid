@@ -4,7 +4,6 @@
   class="popup-pop-overlay"
   data-popup-block="{{ block.id }}"
   data-app-url="https://popup-pop.vercel.app"
-  style="display:none;"
 >
   <div class="popup-pop-modal" role="dialog" aria-modal="true" aria-labelledby="popup-pop-title">
     <button class="popup-pop-close" id="popup-pop-close" aria-label="Close popup" type="button">&times;</button>
@@ -55,7 +54,6 @@
     fetch(appUrl + '/api/popup-settings?shop=' + shop)
       .then(function(res) { return res.json(); })
       .then(function(data) {
-        if (!data.active) return;
         if (data.title && titleEl) titleEl.textContent = data.title;
         if (data.message && messageEl) messageEl.textContent = data.message;
         if (data.colorStart && data.colorEnd) {
@@ -73,8 +71,8 @@
         setTimeout(show, 1500);
       });
 
-    function show() { overlay.classList.add('visible'); overlay.style.display='flex'; }
-    function hide() { overlay.classList.remove('visible'); overlay.style.display='none'; }
+    function show() { overlay.classList.add('visible'); }
+    function hide() { overlay.classList.remove('visible'); }
 
     if (closeBtn) closeBtn.addEventListener('click', hide);
     if (ctaBtn) ctaBtn.addEventListener('click', hide);
