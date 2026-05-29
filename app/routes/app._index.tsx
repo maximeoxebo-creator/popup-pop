@@ -36,10 +36,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const shop = session.shop;
   let hasActivePayment = true;
   try {
-    const billingCheck = await billing.check({ plans: [MONTHLY_PLAN], isTest: true });
+    const billingCheck = await billing.check({ plans: [MONTHLY_PLAN], isTest: false });
     hasActivePayment = billingCheck.hasActivePayment;
     if (!hasActivePayment) {
-      await billing.request({ plan: MONTHLY_PLAN, isTest: true, returnUrl: `${process.env.SHOPIFY_APP_URL}/app` });
+      await billing.request({ plan: MONTHLY_PLAN, isTest: false, returnUrl: `${process.env.SHOPIFY_APP_URL}/app` });
     }
   } catch (error) {
     console.error("Billing check error:", error);
