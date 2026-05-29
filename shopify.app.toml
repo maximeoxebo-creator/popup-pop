@@ -22,3 +22,15 @@ api_version = "2026-04"
 [[webhooks.subscriptions]]
 topics = ["app/uninstalled"]
 uri = "/webhooks"
+
+[[webhooks.subscriptions]]
+topics = ["customers/data_request"]
+uri = "/webhooks"
+
+[[webhooks.subscriptions]]
+topics = ["customers/redact"]
+uri = "/webhooks"
+
+[[webhooks.subscriptions]]
+topics = ["shop/redact"]
+uri = "/webhooks"
