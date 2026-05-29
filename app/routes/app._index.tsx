@@ -5,7 +5,7 @@ import {
   Page, Layout, Card, TextField, Button, Banner,
   BlockStack, Text, Badge, InlineStack, Divider, Select,
 } from "@shopify/polaris";
-import { authenticate, MONTHLY_PLAN } from "~/shopify.server";
+import { authenticate } from "~/shopify.server";
 import prisma from "~/db.server";
 import { useState, useCallback } from "react";
 
@@ -32,28 +32,20 @@ const COLOR_OPTIONS_END = [
 ];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { session, billing } = await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
   const shop = session.shop;
-  let hasActivePayment = true;
-  try {
-    const billingCheck = await billing.check({ plans: [MONTHLY_PLAN], isTest: false });
-    hasActivePayment = billingCheck.hasActivePayment;
-    if (!hasActivePayment) {
-      await billing.request({ plan: MONTHLY_PLAN, isTest: false, returnUrl: `${process.env.SHOPIFY_APP_URL}/app` });
-    }
-  } catch (error) {
-    console.error("Billing check error:", error);
-    hasActivePayment = true;
-  }
+
   let settings = await prisma.popupSettings.findUnique({ where: { shop } });
   if (!settings) settings = await prisma.popupSettings.create({ data: { shop } });
-  return json({ settings, hasActivePayment });
+
+  return json({ settings });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const { session } = await authenticate.admin(request);
   const shop = session.shop;
   const formData = await request.formData();
+
   await prisma.popupSettings.upsert({
     where: { shop },
     update: {
@@ -72,6 +64,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       colorEnd: formData.get("colorEnd") as string,
     },
   });
+
   return json({ success: true });
 };
 
@@ -97,7 +90,6 @@ export default function Index() {
     submit(formData, { method: "post" });
   }, [title, message, isActive, colorStart, colorEnd, submit]);
 
-  // Preview gradient
   const gradientStyle = {
     background: `linear-gradient(135deg, ${colorStart} 0%, ${colorEnd} 100%)`,
     borderRadius: "8px",
@@ -161,7 +153,6 @@ export default function Index() {
                 </div>
               </InlineStack>
 
-              {/* Live preview */}
               <div>
                 <Text as="p" tone="subdued">Preview</Text>
                 <div style={gradientStyle} />
