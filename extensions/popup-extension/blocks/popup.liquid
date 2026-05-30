@@ -59,7 +59,7 @@
 </style>
 
 <script>
-(function() {
+window.addEventListener("load", function() {
   var overlay  = document.getElementById('popup-pop-overlay');
   var modal    = document.getElementById('popup-pop-modal');
   var closeBtn = document.getElementById('popup-pop-close');
@@ -98,8 +98,8 @@
       }
       setTimeout(show, 1200);
     })
-    .catch(function() { setTimeout(show, 1200); });
-})();
+    .catchwindow.addEventListener("load", function() { setTimeout(show, 1200); });
+});
 </script>
 
 {% schema %}
