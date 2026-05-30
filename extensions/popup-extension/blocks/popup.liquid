@@ -1,15 +1,15 @@
-{% comment %} popup-pop v5.2 {% endcomment %}
+{% comment %} popup-pop v5.3 {% endcomment %}
 <div id="popup-pop-overlay" data-app-url="https://popup-pop.vercel.app">
   <div id="popup-pop-modal">
     <button id="popup-pop-close" type="button" aria-label="Close">&#x2715;</button>
     <div id="popup-pop-header">
-      <h2 id="popup-pop-title">{{ block.settings.popup_title | default: "Welcome to our store!" }}</h2>
+      <h2 id="popup-pop-title">Welcome to our store!</h2>
     </div>
     <div id="popup-pop-body">
-      <p id="popup-pop-message">{{ block.settings.popup_message | default: "Get 10% off your first order. Use code WELCOME10" }}</p>
+      <p id="popup-pop-message">Get 10% off your first order. Use code WELCOME10</p>
     </div>
     <div id="popup-pop-footer">
-      <button id="popup-pop-cta" type="button">{{ block.settings.button_text | default: "Shop Now!" }}</button>
+      <button id="popup-pop-cta" type="button">Shop Now!</button>
     </div>
   </div>
 </div>
@@ -32,11 +32,10 @@
     position: relative;
     box-shadow: 0 25px 60px rgba(0,0,0,0.3);
     overflow: hidden;
-    pointer-events: all;
   }
   #popup-pop-header {
     padding: 32px;
-    background: linear-gradient(135deg, {{ block.settings.color_start | default: "#667eea" }}, {{ block.settings.color_end | default: "#764ba2" }});
+    background: linear-gradient(135deg, #667eea, #764ba2);
   }
   #popup-pop-title { color:#fff; margin:0; font-size:22px; font-weight:700; }
   #popup-pop-body  { padding: 24px 32px; }
@@ -44,8 +43,8 @@
   #popup-pop-footer { padding: 0 32px 32px; }
   #popup-pop-cta {
     width:100%; padding:14px; border:0; border-radius:8px; cursor:pointer;
-    background: linear-gradient(135deg, {{ block.settings.color_start | default: "#667eea" }}, {{ block.settings.color_end | default: "#764ba2" }});
-    color:#fff; font-size:16px; font-weight:600; pointer-events: all;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color:#fff; font-size:16px; font-weight:600;
   }
   #popup-pop-close {
     position:absolute; top:10px; right:14px;
@@ -53,38 +52,36 @@
     color:#fff; font-size:20px; cursor:pointer;
     width:32px; height:32px; border-radius:50%;
     display:flex; align-items:center; justify-content:center;
-    pointer-events: all; z-index: 2147483647;
+    z-index: 2147483647;
   }
   #popup-pop-close:hover { background: rgba(255,255,255,0.45); }
+  @media(max-width:480px) {
+    #popup-pop-header, #popup-pop-body, #popup-pop-footer { padding-left:20px; padding-right:20px; }
+  }
 </style>
 
 <script>
-window.addEventListener("load", function() {
+/* popup-pop-v5.3 */
+(function() {
   var overlay  = document.getElementById('popup-pop-overlay');
-  var modal    = document.getElementById('popup-pop-modal');
+  if (!overlay) return;
+
+  var appUrl   = overlay.getAttribute('data-app-url') || 'https://popup-pop.vercel.app';
+  var shop     = (window.Shopify && window.Shopify.shop) ? window.Shopify.shop : location.hostname;
   var closeBtn = document.getElementById('popup-pop-close');
   var ctaBtn   = document.getElementById('popup-pop-cta');
   var titleEl  = document.getElementById('popup-pop-title');
   var msgEl    = document.getElementById('popup-pop-message');
   var headerEl = document.getElementById('popup-pop-header');
+  var ctaEl    = document.getElementById('popup-pop-cta');
 
-  if (!overlay) return;
-
-  function show() {
-    overlay.style.display = 'flex';
-  }
-
-  function hide() {
-    overlay.style.display = 'none';
-  }
+  function show() { overlay.style.display = 'flex'; }
+  function hide() { overlay.style.display = 'none'; }
 
   closeBtn.onclick = function() { hide(); };
   ctaBtn.onclick   = function() { hide(); };
   overlay.onclick  = function(e) { if (e.target === overlay) hide(); };
-  document.onkeydown = function(e) { if (e.key === 'Escape') hide(); };
-
-  var shop = (window.Shopify && window.Shopify.shop) ? window.Shopify.shop : location.hostname;
-  var appUrl = overlay.getAttribute('data-app-url') || 'https://popup-pop.vercel.app';
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') hide(); });
 
   fetch(appUrl + '/api/popup-settings?shop=' + shop)
     .then(function(r) { return r.json(); })
@@ -94,43 +91,19 @@ window.addEventListener("load", function() {
       if (d.message) msgEl.textContent   = d.message;
       if (d.colorStart && d.colorEnd) {
         var g = 'linear-gradient(135deg,' + d.colorStart + ',' + d.colorEnd + ')';
-        headerEl.style.background = document.getElementById('popup-pop-cta').style.background = g;
+        headerEl.style.background = g;
+        ctaEl.style.background    = g;
       }
       setTimeout(show, 1200);
     })
-    .catchwindow.addEventListener("load", function() { setTimeout(show, 1200); });
-});
+    .catch(function() { setTimeout(show, 1200); });
+})();
 </script>
 
 {% schema %}
 {
   "name": "Popup Pop",
   "target": "body",
-  "settings": [
-    { "type": "text",     "id": "popup_title",   "label": "Title",   "default": "Welcome to our store!" },
-    { "type": "textarea", "id": "popup_message",  "label": "Message", "default": "Get 10% off your first order. Use code WELCOME10" },
-    { "type": "text",     "id": "button_text",    "label": "Button",  "default": "Shop Now!" },
-    { "type": "header",   "content": "Colors" },
-    { "type": "select", "id": "color_start", "label": "Start color", "default": "#667eea", "options": [
-      { "value": "#667eea", "label": "Purple Blue" },
-      { "value": "#f093fb", "label": "Pink" },
-      { "value": "#4facfe", "label": "Sky Blue" },
-      { "value": "#43e97b", "label": "Green" },
-      { "value": "#fa709a", "label": "Rose" },
-      { "value": "#f7971e", "label": "Orange" },
-      { "value": "#000000", "label": "Black" },
-      { "value": "#1a1a2e", "label": "Dark Navy" }
-    ]},
-    { "type": "select", "id": "color_end", "label": "End color", "default": "#764ba2", "options": [
-      { "value": "#764ba2", "label": "Deep Purple" },
-      { "value": "#f5576c", "label": "Coral Red" },
-      { "value": "#00f2fe", "label": "Cyan" },
-      { "value": "#38f9d7", "label": "Teal" },
-      { "value": "#ee0979", "label": "Hot Pink" },
-      { "value": "#ff512f", "label": "Warm Red" },
-      { "value": "#434343", "label": "Dark Grey" },
-      { "value": "#16213e", "label": "Midnight Blue" }
-    ]}
-  ]
+  "settings": []
 }
 {% endschema %}
