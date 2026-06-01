@@ -1,11 +1,11 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { useLoaderData, useSubmit, useNavigation } from "@remix-run/react";
 import {
   Page, Layout, Card, TextField, Button, Banner,
   BlockStack, Text, Badge, InlineStack, Divider, Select,
 } from "@shopify/polaris";
-import { authenticate } from "~/shopify.server";
+import { authenticate, MONTHLY_PLAN } from "~/shopify.server";
 import prisma from "~/db.server";
 import { useState, useCallback } from "react";
 
@@ -32,8 +32,22 @@ const COLOR_OPTIONS_END = [
 ];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { session } = await authenticate.admin(request);
+  const { session, billing } = await authenticate.admin(request);
   const shop = session.shop;
+
+  const billingCheck = await billing.check({
+    plans: [MONTHLY_PLAN],
+    isTest: false,
+  });
+
+  if (!billingCheck.hasActivePayment) {
+    const paymentResponse = await billing.request({
+      plan: MONTHLY_PLAN,
+      isTest: false,
+      returnUrl: `${process.env.SHOPIFY_APP_URL}/app`,
+    });
+    return redirect(paymentResponse.confirmationUrl);
+  }
 
   let settings = await prisma.popupSettings.findUnique({ where: { shop } });
   if (!settings) settings = await prisma.popupSettings.create({ data: { shop } });
