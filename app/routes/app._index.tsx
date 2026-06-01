@@ -35,18 +35,26 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, billing } = await authenticate.admin(request);
   const shop = session.shop;
 
-  const billingCheck = await billing.check({
-    plans: [MONTHLY_PLAN],
-    isTest: false,
-  });
+  // isTest: true sur les boutiques dev (reviewers Shopify inclus), false en production
+  const isTest = process.env.NODE_ENV !== "production";
 
-  if (!billingCheck.hasActivePayment) {
-    const paymentResponse = await billing.request({
-      plan: MONTHLY_PLAN,
-      isTest: false,
-      returnUrl: `${process.env.SHOPIFY_APP_URL}/app`,
+  try {
+    const billingCheck = await billing.check({
+      plans: [MONTHLY_PLAN],
+      isTest,
     });
-    return redirect(paymentResponse.confirmationUrl);
+
+    if (!billingCheck.hasActivePayment) {
+      const paymentResponse = await billing.request({
+        plan: MONTHLY_PLAN,
+        isTest,
+        returnUrl: `${process.env.SHOPIFY_APP_URL}/app`,
+      });
+      return redirect(paymentResponse.confirmationUrl);
+    }
+  } catch (error) {
+    // En cas d'erreur billing, on continue sans bloquer l'accès
+    console.error("Billing check error:", error);
   }
 
   let settings = await prisma.popupSettings.findUnique({ where: { shop } });
