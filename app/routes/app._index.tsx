@@ -34,8 +34,10 @@ const COLOR_OPTIONS_END = [
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, billing } = await authenticate.admin(request);
   const shop = session.shop;
-  const isTest = process.env.NODE_ENV !== "production";
 
+  const isTest = process.env.BILLING_TEST_MODE === "true";
+
+  // billing.require gère tout en une étape — redirige vers le paiement si pas d'abonnement
   await billing.require({
     plans: [MONTHLY_PLAN],
     isTest,
