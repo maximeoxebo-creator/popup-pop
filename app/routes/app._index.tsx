@@ -5,7 +5,7 @@ import {
   Page, Layout, Card, TextField, Button, Banner,
   BlockStack, Text, Badge, InlineStack, Divider, Select,
 } from "@shopify/polaris";
-import { authenticate, MONTHLY_PLAN } from "~/shopify.server";
+import { authenticate } from "~/shopify.server";
 import prisma from "~/db.server";
 import { useState, useCallback } from "react";
 
@@ -32,21 +32,8 @@ const COLOR_OPTIONS_END = [
 ];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { session, billing } = await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
   const shop = session.shop;
-
-  const isTest = process.env.BILLING_TEST_MODE === "true";
-
-  // billing.require gère tout en une étape — redirige vers le paiement si pas d'abonnement
-  await billing.require({
-    plans: [MONTHLY_PLAN],
-    isTest,
-    onFailure: async () => billing.request({
-      plan: MONTHLY_PLAN,
-      isTest,
-      returnUrl: `${process.env.SHOPIFY_APP_URL}/app`,
-    }),
-  });
 
   let settings = await prisma.popupSettings.findUnique({ where: { shop } });
   if (!settings) settings = await prisma.popupSettings.create({ data: { shop } });
