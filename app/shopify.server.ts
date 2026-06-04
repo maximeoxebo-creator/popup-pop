@@ -8,7 +8,6 @@ import {
 import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
 import prisma from "~/db.server";
 
-// Ce nom DOIT correspondre exactement au nom du plan dans le Partner Dashboard
 export const MONTHLY_PLAN = "monthly";
 
 const shopify = shopifyApp({
@@ -20,10 +19,11 @@ const shopify = shopifyApp({
   authPathPrefix: "/auth",
   sessionStorage: new PrismaSessionStorage(prisma),
   distribution: AppDistribution.AppStore,
-  future: { unstable_newEmbeddedAuthStrategy: true },
-
+  future: {
+    unstable_newEmbeddedAuthStrategy: true,
+    expiringOfflineAccessTokens: true, // FIX: obligatoire depuis avril 2026 pour les apps publiques
+  },
   billing: {
-    // Nom du plan — format simple, PAS lineItems (cause des 403 avec shopify-app-remix v3.3.0)
     [MONTHLY_PLAN]: {
       amount: 19.99,
       currencyCode: "USD",

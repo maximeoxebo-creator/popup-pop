@@ -12,26 +12,15 @@ export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { billing } = await shopify.authenticate.admin(request);
 
-  try {
-    await billing.require({
-      plans: [MONTHLY_PLAN],
-      isTest: true,
-      onFailure: async () =>
-        billing.request({
-          plan: MONTHLY_PLAN,
-          isTest: true,
-        }),
-    });
-  } catch (error: any) {
-    // billing.request throws a redirect — on le laisse passer (c'est voulu)
-    if (error?.status === 302 || error instanceof Response) {
-      throw error;
-    }
-    // 403 = boutique de dev qui ne supporte pas l'API billing
-    // On laisse l'utilisateur accéder à l'app sans bloquer
-    // Sur une vraie boutique App Store, ce cas n'arrive pas
-    console.error("Billing check skipped (dev store limitation):", error?.message);
-  }
+  await billing.require({
+    plans: [MONTHLY_PLAN],
+    isTest: true,
+    onFailure: async () =>
+      billing.request({
+        plan: MONTHLY_PLAN,
+        isTest: true,
+      }),
+  });
 
   const apiKey = process.env.SHOPIFY_API_KEY || "";
   return json({ apiKey });
