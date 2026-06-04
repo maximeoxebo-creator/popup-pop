@@ -8,7 +8,7 @@ import {
 import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
 import prisma from "~/db.server";
 
-// ✅ Nom du plan — doit correspondre exactement au handle dans le Partners Dashboard
+// Ce nom DOIT correspondre exactement au nom du plan dans le Partner Dashboard
 export const MONTHLY_PLAN = "monthly";
 
 const shopify = shopifyApp({
@@ -22,16 +22,13 @@ const shopify = shopifyApp({
   distribution: AppDistribution.AppStore,
   future: { unstable_newEmbeddedAuthStrategy: true },
 
-  // ✅ Billing — abonnement mensuel à 19.99$
   billing: {
+    // Nom du plan — format simple, PAS lineItems (cause des 403 avec shopify-app-remix v3.3.0)
     [MONTHLY_PLAN]: {
-      lineItems: [
-        {
-          amount: 19.99,
-          currencyCode: "USD",
-          interval: BillingInterval.Every30Days,
-        },
-      ],
+      amount: 19.99,
+      currencyCode: "USD",
+      interval: BillingInterval.Every30Days,
+      trialDays: 7,
     },
   },
 });
