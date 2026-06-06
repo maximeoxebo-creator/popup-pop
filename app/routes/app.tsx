@@ -5,31 +5,29 @@ import { boundary } from "@shopify/shopify-app-remix/server";
 import { AppProvider } from "@shopify/shopify-app-remix/react";
 import { NavMenu } from "@shopify/app-bridge-react";
 import polarisStyles from "@shopify/polaris/build/esm/styles.css?url";
-import shopify, { MONTHLY_PLAN } from "~/shopify.server";
+import shopify from "~/shopify.server";
+import prisma from "~/db.server";
 
 export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { billing, session, redirect } = await shopify.authenticate.admin(request);
+  const { session, redirect } = await shopify.authenticate.admin(request);
 
-  const shopHandle = session.shop.replace('.myshopify.com', '');
+  const shop = session.shop;
+  const shopHandle = shop.replace('.myshopify.com', '');
   const appHandle = 'popup-pop';
 
-  try {
-    const { hasActivePayment } = await billing.check({
-      plans: [MONTHLY_PLAN],
-      isTest: true,
-    });
+  // Vérifier si le marchand a déjà des settings en DB
+  // Si non → première visite → rediriger vers la page de pricing
+  const settings = await prisma.popupSettings.findUnique({
+    where: { shop },
+  });
 
-    if (!hasActivePayment) {
-      return redirect(
-        `https://admin.shopify.com/store/${shopHandle}/charges/${appHandle}/pricing_plans`,
-        { target: "_top" }
-      );
-    }
-  } catch (error) {
-    // Si billing.check échoue (ex: boutique de dev), on laisse passer
-    console.error("Billing check error:", error);
+  if (!settings) {
+    return redirect(
+      `https://admin.shopify.com/store/${shopHandle}/charges/${appHandle}/pricing_plans`,
+      { target: "_top" }
+    );
   }
 
   const apiKey = process.env.SHOPIFY_API_KEY || "";
