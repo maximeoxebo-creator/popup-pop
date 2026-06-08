@@ -35,21 +35,23 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, billing } = await authenticate.admin(request);
   const shop = session.shop;
 
-  // Billing check sans try/catch — bloque vraiment l'accès sans abonnement
-  console.log("billing check start");
-  const billingCheck = await billing.check({
-    plans: [MONTHLY_PLAN],
-    isTest: false,
-  });
-
-  console.log("hasActivePayment:", billingCheck.hasActivePayment);
-  if (!billingCheck.hasActivePayment) {
-    const paymentResponse = await billing.request({
-      plan: MONTHLY_PLAN,
+  try {
+    const billingCheck = await billing.check({
+      plans: [MONTHLY_PLAN],
       isTest: false,
-      returnUrl: `${process.env.SHOPIFY_APP_URL}/app`,
     });
-    return redirect(paymentResponse.confirmationUrl);
+
+    if (!billingCheck.hasActivePayment) {
+      const paymentResponse = await billing.request({
+        plan: MONTHLY_PLAN,
+        isTest: false,
+        returnUrl: `${process.env.SHOPIFY_APP_URL}/app`,
+      });
+      return redirect(paymentResponse.confirmationUrl);
+    }
+  } catch (error) {
+    // Billing API non disponible (boutique dev) — on laisse passer
+    console.error("Billing check error:", error);
   }
 
   let settings = await prisma.popupSettings.findUnique({ where: { shop } });
