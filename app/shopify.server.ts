@@ -2,34 +2,23 @@ import "@shopify/shopify-app-remix/adapters/node";
 import {
   ApiVersion,
   AppDistribution,
-  BillingInterval,
   shopifyApp,
 } from "@shopify/shopify-app-remix/server";
 import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
 import prisma from "~/db.server";
 
-export const MONTHLY_PLAN = "monthly";
-
 const shopify = shopifyApp({
   apiKey: process.env.SHOPIFY_API_KEY,
   apiSecretKey: process.env.SHOPIFY_API_SECRET || "",
   apiVersion: ApiVersion.April25,
-  scopes: process.env.SCOPES?.split(","),
+  scopes: [],
   appUrl: process.env.SHOPIFY_APP_URL || "",
   authPathPrefix: "/auth",
   sessionStorage: new PrismaSessionStorage(prisma),
   distribution: AppDistribution.AppStore,
   future: {
     unstable_newEmbeddedAuthStrategy: true,
-    expiringOfflineAccessTokens: true, // FIX: obligatoire depuis avril 2026 pour les apps publiques
-  },
-  billing: {
-    [MONTHLY_PLAN]: {
-      amount: 19.99,
-      currencyCode: "USD",
-      interval: BillingInterval.Every30Days,
-      trialDays: 7,
-    },
+    expiringOfflineAccessTokens: true,
   },
 });
 
