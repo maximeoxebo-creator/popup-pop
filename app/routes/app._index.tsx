@@ -52,7 +52,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     }
   } catch (error) {
     // En cas d'erreur billing, on continue sans bloquer
-    console.error("Billing check error:", error);
+    console.error("Billing check error:", JSON.stringify(error?.response?.body, null, 2));
   }
 
   let settings = await prisma.popupSettings.findUnique({ where: { shop } });
