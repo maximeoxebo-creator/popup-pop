@@ -6,7 +6,7 @@ embedded = true
 name = "popup-pop"
 
 [access_scopes]
-scopes = ""
+scopes = "read_orders"
 optional_scopes = [ ]
 use_legacy_install_flow = false
 
