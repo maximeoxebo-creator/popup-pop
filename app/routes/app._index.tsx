@@ -36,11 +36,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const shop = session.shop;
 
   // Billing check sans try/catch — bloque vraiment l'accès sans abonnement
+  console.log("billing check start");
   const billingCheck = await billing.check({
     plans: [MONTHLY_PLAN],
     isTest: false,
   });
 
+  console.log("hasActivePayment:", billingCheck.hasActivePayment);
   if (!billingCheck.hasActivePayment) {
     const paymentResponse = await billing.request({
       plan: MONTHLY_PLAN,
