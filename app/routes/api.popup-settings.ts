@@ -38,6 +38,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     messageColor: settings.messageColor,
     fontFamily:   settings.fontFamily,
     liquidGlass:      settings.liquidGlass,
+    glassGradient:    (settings as any).glassGradient ?? false,
     colorStart:       settings.colorStart,
     colorEnd:         settings.colorEnd,
     buttonTextColor:  settings.buttonTextColor,

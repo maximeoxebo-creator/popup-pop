@@ -1,4 +1,4 @@
-{% comment %} popup-pop v5.8 {% endcomment %}
+{% comment %} popup-pop v6.0 {% endcomment %}
 <div id="popup-pop-overlay" data-app-url="https://popup-pop.vercel.app" data-popup-block="{{ block.id }}">
   <div id="popup-pop-modal">
     <button id="popup-pop-close" type="button" aria-label="Close">&#x2715;</button>
@@ -24,6 +24,14 @@
     align-items: center;
     justify-content: center;
   }
+
+  /* Overlay liquid glass : quasi invisible */
+  #popup-pop-overlay.liquid-glass {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
+
   #popup-pop-modal {
     background: #fff;
     border-radius: 16px;
@@ -70,64 +78,89 @@
   }
   #popup-pop-close:hover { background: rgba(255,255,255,0.45); }
 
-  /* ── Liquid Glass — s'applique uniquement sur la modal, pas l'overlay ── */
+  /* ── Liquid Glass : modal blanche lumineuse ── */
   #popup-pop-modal.liquid-glass {
-    background: rgba(255,255,255,0.18);
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(36px) saturate(200%) brightness(1.08);
+    -webkit-backdrop-filter: blur(36px) saturate(200%) brightness(1.08);
+    border: 1px solid rgba(255,255,255,0.90);
     border-radius: 28px;
+    overflow: visible;
     box-shadow:
-      0 0 0 0.5px rgba(255,255,255,0.20) inset,
-      0 2px 4px rgba(255,255,255,0.25) inset,
-      0 32px 80px rgba(0,0,0,0.35),
-      0 8px 24px rgba(0,0,0,0.15);
+      0 0 0 0.5px rgba(255,255,255,0.80) inset,
+      0 2px 6px rgba(255,255,255,0.60) inset,
+      0 20px 60px rgba(0,0,0,0.10),
+      0 4px 16px rgba(0,0,0,0.06);
   }
   #popup-pop-modal.liquid-glass::before {
     content: '';
     position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    border-radius: 28px 28px 0 0;
     background: linear-gradient(90deg,
-      transparent 0%, rgba(255,255,255,0.7) 30%,
-      rgba(255,255,255,0.9) 50%, rgba(255,255,255,0.7) 70%, transparent 100%);
+      transparent 0%, rgba(255,255,255,0.95) 30%,
+      white 50%, rgba(255,255,255,0.95) 70%, transparent 100%);
     z-index: 1;
   }
   #popup-pop-modal.liquid-glass::after {
     content: ''; position: absolute; inset: 0; border-radius: 28px;
-    background: linear-gradient(145deg,
-      rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.09) 100%);
+    background: linear-gradient(160deg,
+      rgba(255,255,255,0.55) 0%,
+      rgba(255,255,255,0.15) 45%,
+      rgba(255,255,255,0.30) 100%);
     pointer-events: none; z-index: 0;
   }
+
+  /* Header glass par défaut : blanc transparent */
   #popup-pop-modal.liquid-glass #popup-pop-header {
-    /* Par défaut transparent/blanc — peut être coloré via JS si gradient défini */
-    background: rgba(255,255,255,0.12);
-    border-bottom: 1px solid rgba(255,255,255,0.20);
+    background: rgba(255,255,255,0.45);
+    border-bottom: 1px solid rgba(255,255,255,0.70);
+    border-radius: 28px 28px 0 0;
     position: relative; z-index: 2;
   }
-  #popup-pop-modal.liquid-glass #popup-pop-body {
-    border-bottom: 1px solid rgba(255,255,255,0.16);
+
+  /* Header glass avec gradient activé — appliqué via JS */
+  #popup-pop-modal.liquid-glass #popup-pop-header.has-gradient {
+    border-bottom: 1px solid rgba(255,255,255,0.30);
+    border-radius: 28px 28px 0 0;
     position: relative; z-index: 2;
-    background: transparent;
+  }
+
+  #popup-pop-modal.liquid-glass #popup-pop-body {
+    background: rgba(255,255,255,0.25);
+    border-bottom: 1px solid rgba(255,255,255,0.55);
+    position: relative; z-index: 2;
   }
   #popup-pop-modal.liquid-glass #popup-pop-footer {
+    background: rgba(255,255,255,0.20);
+    border-radius: 0 0 28px 28px;
     position: relative; z-index: 2;
-    background: transparent;
   }
+
+  /* Bouton CTA glass */
   #popup-pop-modal.liquid-glass #popup-pop-cta {
-    background: rgba(255,255,255,0.22);
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.42); border-radius: 14px;
-    box-shadow: 0 1px 2px rgba(255,255,255,0.30) inset, 0 4px 16px rgba(0,0,0,0.12);
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.85);
+    border-radius: 14px;
+    color: #1a1a2e;
+    box-shadow:
+      0 1px 3px rgba(255,255,255,0.80) inset,
+      0 4px 12px rgba(0,0,0,0.06);
     transition: background 0.2s ease;
-    /* color héritée du JS (buttonTextColor) ou blanc par défaut */
-    color: #fff;
   }
   #popup-pop-modal.liquid-glass #popup-pop-cta:hover {
-    background: rgba(255,255,255,0.32);
+    background: rgba(255,255,255,0.72);
   }
+
+  /* Bouton fermer glass */
   #popup-pop-modal.liquid-glass #popup-pop-close {
-    background: rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.55);
     backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.35);
+    border: 1px solid rgba(255,255,255,0.80);
+    color: #555;
+  }
+  #popup-pop-modal.liquid-glass #popup-pop-close:hover {
+    background: rgba(255,255,255,0.78);
   }
 
   @media(max-width:480px) {
@@ -136,7 +169,7 @@
 </style>
 
 <script>
-/* popup-pop-v5.8 */
+/* popup-pop-v6.0 */
 (function() {
   var overlay  = document.getElementById('popup-pop-overlay');
   if (!overlay) return;
@@ -145,13 +178,13 @@
   var KEY    = 'popup_pop_shown_' + (overlay.getAttribute('data-popup-block') || 'default');
   if (sessionStorage.getItem(KEY)) return;
 
-  var shop      = (window.Shopify && window.Shopify.shop) ? window.Shopify.shop : location.hostname;
-  var closeBtn  = document.getElementById('popup-pop-close');
-  var titleEl   = document.getElementById('popup-pop-title');
-  var msgEl     = document.getElementById('popup-pop-message');
-  var headerEl  = document.getElementById('popup-pop-header');
-  var ctaEl     = document.getElementById('popup-pop-cta');
-  var modal     = document.getElementById('popup-pop-modal');
+  var shop     = (window.Shopify && window.Shopify.shop) ? window.Shopify.shop : location.hostname;
+  var closeBtn = document.getElementById('popup-pop-close');
+  var titleEl  = document.getElementById('popup-pop-title');
+  var msgEl    = document.getElementById('popup-pop-message');
+  var headerEl = document.getElementById('popup-pop-header');
+  var ctaEl    = document.getElementById('popup-pop-cta');
+  var modal    = document.getElementById('popup-pop-modal');
 
   function show() { overlay.style.display = 'flex'; sessionStorage.setItem(KEY, '1'); }
   function hide() { overlay.style.display = 'none'; }
@@ -198,23 +231,27 @@
       if (d.titleColor)   titleEl.style.color = d.titleColor;
       if (d.messageColor) msgEl.style.color   = d.messageColor;
 
-      /* Liquid Glass — effet sur la modal uniquement, overlay reste sombre */
       if (d.liquidGlass) {
-        /* NE PAS toucher l'overlay — il garde son fond sombre semi-transparent */
+        overlay.classList.add('liquid-glass');
         modal.classList.add('liquid-glass');
 
-        /* Header : gradient coloré seulement si l'utilisateur a défini des couleurs
-           Sinon reste blanc/transparent (défaut CSS ci-dessus) */
-        if (d.colorStart && d.colorEnd) {
-          headerEl.style.background =
-            'linear-gradient(135deg,' + d.colorStart + '33 0%,' + d.colorEnd + '33 100%)';
+        if (d.glassGradient && d.colorStart && d.colorEnd) {
+          /* Gradient plein sur header ET bouton + effet glass par dessus, body/footer restent transparents */
+          var g = 'linear-gradient(135deg,' + d.colorStart + ' 0%,' + d.colorEnd + ' 100%)';
+          headerEl.classList.add('has-gradient');
+          headerEl.style.background = g;
+          ctaEl.style.background    = g;
+          /* Texte blanc sur gradient coloré */
+          if (!d.titleColor) titleEl.style.color = '#fff';
+        } else {
+          /* Header blanc transparent, texte sombre */
+          if (!d.titleColor) titleEl.style.color = '#1a1a2e';
         }
-        /* Couleurs texte par défaut en mode glass */
-        if (!d.titleColor)   titleEl.style.color = '#fff';
-        if (!d.messageColor) msgEl.style.color   = 'rgba(255,255,255,0.88)';
+
+        if (!d.messageColor) msgEl.style.color = '#2d3748';
 
       } else {
-        /* Mode normal : gradient plein sur header et bouton */
+        /* Mode normal : gradient plein partout */
         if (d.colorStart && d.colorEnd) {
           var g = 'linear-gradient(135deg,' + d.colorStart + ',' + d.colorEnd + ')';
           headerEl.style.background = g;
@@ -222,10 +259,8 @@
         }
       }
 
-      /* Couleur texte du bouton (option indépendante) */
-      if (d.buttonTextColor) {
-        ctaEl.style.color = d.buttonTextColor;
-      }
+      /* Couleur texte du bouton */
+      if (d.buttonTextColor) ctaEl.style.color = d.buttonTextColor;
 
       setTimeout(show, 1200);
     })
