@@ -26,24 +26,25 @@ model Session {
 }
 
 model PopupSettings {
-  id            String   @id @default(cuid())
-  shop          String   @unique
-  title         String   @default("Welcome to our store!")
-  message       String   @default("Get 10% off your first order. Use code WELCOME10")
-  buttonText    String   @default("Shop Now!")
-  textAlign     String   @default("left")
-  titleSize     String   @default("22")
-  messageSize   String   @default("16")
-  titleColor    String   @default("#ffffff")
-  messageColor  String   @default("#4a5568")
-  fontFamily    String   @default("inherit")
-  liquidGlass   Boolean  @default(false)
-  isActive      Boolean  @default(true)
-  colorStart       String   @default("#667eea")
-  colorEnd         String   @default("#764ba2")
-  buttonTextColor  String   @default("#ffffff")
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id              String   @id @default(cuid())
+  shop            String   @unique
+  title           String   @default("Welcome to our store!")
+  message         String   @default("Get 10% off your first order. Use code WELCOME10")
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  colorStart      String   @default("#667eea")
+  colorEnd        String   @default("#764ba2")
+  buttonText      String   @default("Shop Now!")
+  messageSize     String   @default("16")
+  textAlign       String   @default("left")
+  titleSize       String   @default("22")
+  fontFamily      String   @default("inherit")
+  liquidGlass     Boolean  @default(false)
+  messageColor    String   @default("#4a5568")
+  titleColor      String   @default("#ffffff")
+  buttonTextColor String?  @default("#ffffff")
+  glassGradient   Boolean? @default(false)
 }
 
 model BannerSettings {
