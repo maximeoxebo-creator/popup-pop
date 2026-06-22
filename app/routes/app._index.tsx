@@ -91,6 +91,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       fontFamily:   formData.get("fontFamily") as string,
       liquidGlass:      formData.get("liquidGlass") === "true",
       glassGradient:    formData.get("glassGradient") === "true",
+      promoCode:        formData.get("promoCode") as string,
       isActive:         formData.get("isActive") === "true",
       colorStart:       formData.get("colorStart") as string,
       colorEnd:         formData.get("colorEnd") as string,
@@ -109,6 +110,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       fontFamily:       formData.get("fontFamily") as string,
       liquidGlass:      formData.get("liquidGlass") === "true",
       glassGradient:    formData.get("glassGradient") === "true",
+      promoCode:        formData.get("promoCode") as string,
       isActive:         formData.get("isActive") === "true",
       colorStart:       formData.get("colorStart") as string,
       colorEnd:         formData.get("colorEnd") as string,
@@ -136,6 +138,7 @@ export default function Index() {
   const [fontFamily, setFontFamily]     = useState(settings.fontFamily ?? "inherit");
   const [liquidGlass, setLiquidGlass]         = useState(settings.liquidGlass ?? false);
   const [glassGradient, setGlassGradient]     = useState((settings as any).glassGradient ?? false);
+  const [promoCode, setPromoCode]             = useState((settings as any).promoCode ?? "");
   const [isActive, setIsActive]         = useState(settings.isActive);
   const [colorStart, setColorStart]           = useState(settings.colorStart ?? "#667eea");
   const [colorEnd, setColorEnd]               = useState(settings.colorEnd ?? "#764ba2");
@@ -162,12 +165,13 @@ export default function Index() {
     formData.append("fontFamily",   fontFamily);
     formData.append("liquidGlass",      String(liquidGlass));
     formData.append("glassGradient",    String(glassGradient));
+    formData.append("promoCode",        promoCode);
     formData.append("isActive",         String(isActive));
     formData.append("colorStart",       colorStart);
     formData.append("colorEnd",         colorEnd);
     formData.append("buttonTextColor",  buttonTextColor);
     submit(formData, { method: "post" });
-  }, [title, message, buttonText, textAlign, titleSize, messageSize, titleColor, messageColor, fontFamily, liquidGlass, glassGradient, isActive, colorStart, colorEnd, buttonTextColor, submit, allValid]);
+  }, [title, message, buttonText, textAlign, titleSize, messageSize, titleColor, messageColor, fontFamily, liquidGlass, glassGradient, promoCode, isActive, colorStart, colorEnd, buttonTextColor, submit, allValid]);
 
   const previewGradient = colorStartValid && colorEndValid
     ? `linear-gradient(135deg, ${colorStart} 0%, ${colorEnd} 100%)`
@@ -209,6 +213,14 @@ export default function Index() {
                 multiline={3}
                 autoComplete="off"
                 placeholder="Get 10% off your first order. Use code WELCOME10"
+              />
+              <TextField
+                label="Promo code (optional)"
+                value={promoCode}
+                onChange={setPromoCode}
+                autoComplete="off"
+                placeholder="Ex: SUMMER50"
+                helpText="If filled, a copy button will appear below the message."
               />
               <TextField
                 label="Button text"

@@ -39,6 +39,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     fontFamily:   settings.fontFamily,
     liquidGlass:      settings.liquidGlass,
     glassGradient:    (settings as any).glassGradient ?? false,
+    promoCode:        (settings as any).promoCode ?? "",
     colorStart:       settings.colorStart,
     colorEnd:         settings.colorEnd,
     buttonTextColor:  settings.buttonTextColor,

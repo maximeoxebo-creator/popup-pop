@@ -1,4 +1,4 @@
-{% comment %} popup-pop v6.0 {% endcomment %}
+{% comment %} popup-pop v6.1 {% endcomment %}
 <div id="popup-pop-overlay" data-app-url="https://popup-pop.vercel.app" data-popup-block="{{ block.id }}">
   <div id="popup-pop-modal">
     <button id="popup-pop-close" type="button" aria-label="Close">&#x2715;</button>
@@ -7,6 +7,17 @@
     </div>
     <div id="popup-pop-body">
       <p id="popup-pop-message">Get 10% off your first order. Use code WELCOME10</p>
+      <div id="popup-pop-promo" style="display:none; margin-top:16px;">
+        <div id="popup-pop-promo-inner">
+          <span id="popup-pop-promo-code">WELCOME10</span>
+          <button id="popup-pop-copy" type="button" aria-label="Copier le code">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            <span id="popup-pop-copy-label">Copier</span>
+          </button>
+        </div>
+      </div>
     </div>
     <div id="popup-pop-footer">
       <button id="popup-pop-cta" type="button">Shop Now!</button>
@@ -78,89 +89,158 @@
   }
   #popup-pop-close:hover { background: rgba(255,255,255,0.45); }
 
-  /* ── Liquid Glass : modal blanche lumineuse ── */
+  /* ── Liquid Glass style Apple ── */
+
+  /* La modal entière : ultra transparente, fort blur comme iOS */
   #popup-pop-modal.liquid-glass {
-    background: rgba(255,255,255,0.72);
-    backdrop-filter: blur(36px) saturate(200%) brightness(1.08);
-    -webkit-backdrop-filter: blur(36px) saturate(200%) brightness(1.08);
-    border: 1px solid rgba(255,255,255,0.90);
+    background: rgba(255,255,255,0.52);
+    backdrop-filter: blur(60px) saturate(240%) brightness(1.15);
+    -webkit-backdrop-filter: blur(60px) saturate(240%) brightness(1.15);
+    border: 1px solid rgba(255,255,255,0.55);
     border-radius: 28px;
-    overflow: visible;
+    overflow: hidden;
     box-shadow:
-      0 0 0 0.5px rgba(255,255,255,0.80) inset,
-      0 2px 6px rgba(255,255,255,0.60) inset,
-      0 20px 60px rgba(0,0,0,0.10),
-      0 4px 16px rgba(0,0,0,0.06);
+      0 0 0 0.5px rgba(255,255,255,0.85) inset,
+      0 1px 0 rgba(255,255,255,0.60) inset,
+      0 24px 48px rgba(0,0,0,0.12),
+      0 6px 16px rgba(0,0,0,0.08);
   }
+
+  /* Reflet glossy en haut — signature Apple */
   #popup-pop-modal.liquid-glass::before {
     content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 1px;
-    border-radius: 28px 28px 0 0;
+    position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
     background: linear-gradient(90deg,
-      transparent 0%, rgba(255,255,255,0.95) 30%,
-      white 50%, rgba(255,255,255,0.95) 70%, transparent 100%);
-    z-index: 1;
+      transparent 0%, rgba(255,255,255,1) 40%,
+      rgba(255,255,255,1) 60%, transparent 100%);
+    z-index: 10;
   }
+
+  /* Voile très léger sur la surface */
   #popup-pop-modal.liquid-glass::after {
-    content: ''; position: absolute; inset: 0; border-radius: 28px;
-    background: linear-gradient(160deg,
-      rgba(255,255,255,0.55) 0%,
-      rgba(255,255,255,0.15) 45%,
-      rgba(255,255,255,0.30) 100%);
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(175deg,
+      rgba(255,255,255,0.28) 0%,
+      rgba(255,255,255,0.02) 50%,
+      rgba(255,255,255,0.06) 100%);
     pointer-events: none; z-index: 0;
   }
 
-  /* Header glass par défaut : blanc transparent */
+  /* Header sans gradient : très transparent */
   #popup-pop-modal.liquid-glass #popup-pop-header {
-    background: rgba(255,255,255,0.45);
-    border-bottom: 1px solid rgba(255,255,255,0.70);
+    background: rgba(255,255,255,0.18);
+    border-bottom: 1px solid rgba(255,255,255,0.28);
     border-radius: 28px 28px 0 0;
     position: relative; z-index: 2;
   }
 
-  /* Header glass avec gradient activé — appliqué via JS */
+  /* Header avec gradient : couleur à 55% d'opacité seulement */
   #popup-pop-modal.liquid-glass #popup-pop-header.has-gradient {
-    border-bottom: 1px solid rgba(255,255,255,0.30);
+    border-bottom: 1px solid rgba(255,255,255,0.22);
     border-radius: 28px 28px 0 0;
+    position: relative; z-index: 2;
+    /* background appliqué en JS avec opacité réduite via hex alpha */
+  }
+
+  /* Body : légèrement opacifié pour lisibilité */
+  #popup-pop-modal.liquid-glass #popup-pop-body {
+    background: rgba(255,255,255,0.38);
+    border-bottom: none;
     position: relative; z-index: 2;
   }
 
-  #popup-pop-modal.liquid-glass #popup-pop-body {
-    background: rgba(255,255,255,0.25);
-    border-bottom: 1px solid rgba(255,255,255,0.55);
-    position: relative; z-index: 2;
-  }
   #popup-pop-modal.liquid-glass #popup-pop-footer {
-    background: rgba(255,255,255,0.20);
+    background: rgba(255,255,255,0.35);
     border-radius: 0 0 28px 28px;
     position: relative; z-index: 2;
   }
 
-  /* Bouton CTA glass */
+  /* Bouton CTA : style pill iOS, translucide avec reflet */
   #popup-pop-modal.liquid-glass #popup-pop-cta {
-    background: rgba(255,255,255,0.55);
-    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255,255,255,0.85);
-    border-radius: 14px;
+    background: rgba(255,255,255,0.28);
+    backdrop-filter: blur(20px) saturate(200%);
+    -webkit-backdrop-filter: blur(20px) saturate(200%);
+    border: 1px solid rgba(255,255,255,0.65);
+    border-radius: 50px;
     color: #1a1a2e;
     box-shadow:
-      0 1px 3px rgba(255,255,255,0.80) inset,
-      0 4px 12px rgba(0,0,0,0.06);
-    transition: background 0.2s ease;
+      0 1px 0 rgba(255,255,255,0.85) inset,
+      0 -1px 0 rgba(0,0,0,0.06) inset,
+      0 2px 8px rgba(0,0,0,0.08);
+    transition: background 0.18s ease;
   }
   #popup-pop-modal.liquid-glass #popup-pop-cta:hover {
-    background: rgba(255,255,255,0.72);
+    background: rgba(255,255,255,0.42);
   }
 
-  /* Bouton fermer glass */
+  /* Bouton fermer : cercle glass */
   #popup-pop-modal.liquid-glass #popup-pop-close {
-    background: rgba(255,255,255,0.55);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.80);
-    color: #555;
+    background: rgba(255,255,255,0.30);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.65);
+    color: #333;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.80) inset;
   }
   #popup-pop-modal.liquid-glass #popup-pop-close:hover {
-    background: rgba(255,255,255,0.78);
+    background: rgba(255,255,255,0.50);
+  }
+
+  /* ── Bloc code promo ── */
+  #popup-pop-promo-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1.5px dashed rgba(0,0,0,0.18);
+    border-radius: 10px;
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.03);
+    gap: 12px;
+  }
+  #popup-pop-promo-code {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #1a1a2e;
+    font-family: 'Courier New', monospace;
+    flex: 1;
+    text-align: center;
+  }
+  #popup-pop-copy {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 7px;
+    background: rgba(255,255,255,0.70);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+    transition: background 0.15s ease, transform 0.1s ease;
+    flex-shrink: 0;
+  }
+  #popup-pop-copy:hover { background: rgba(255,255,255,0.95); }
+  #popup-pop-copy:active { transform: scale(0.96); }
+  #popup-pop-copy.copied {
+    color: #16a34a;
+    border-color: rgba(22,163,74,0.35);
+    background: rgba(22,163,74,0.08);
+  }
+
+  /* Adaptation glass mode */
+  #popup-pop-modal.liquid-glass #popup-pop-promo-inner {
+    border-color: rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.20);
+  }
+  #popup-pop-modal.liquid-glass #popup-pop-copy {
+    background: rgba(255,255,255,0.35);
+    border-color: rgba(255,255,255,0.60);
+    color: #1a1a2e;
+  }
+  #popup-pop-modal.liquid-glass #popup-pop-copy:hover {
+    background: rgba(255,255,255,0.55);
   }
 
   @media(max-width:480px) {
@@ -178,13 +258,17 @@
   var KEY    = 'popup_pop_shown_' + (overlay.getAttribute('data-popup-block') || 'default');
   if (sessionStorage.getItem(KEY)) return;
 
-  var shop     = (window.Shopify && window.Shopify.shop) ? window.Shopify.shop : location.hostname;
-  var closeBtn = document.getElementById('popup-pop-close');
-  var titleEl  = document.getElementById('popup-pop-title');
-  var msgEl    = document.getElementById('popup-pop-message');
-  var headerEl = document.getElementById('popup-pop-header');
-  var ctaEl    = document.getElementById('popup-pop-cta');
-  var modal    = document.getElementById('popup-pop-modal');
+  var shop      = (window.Shopify && window.Shopify.shop) ? window.Shopify.shop : location.hostname;
+  var closeBtn  = document.getElementById('popup-pop-close');
+  var titleEl   = document.getElementById('popup-pop-title');
+  var msgEl     = document.getElementById('popup-pop-message');
+  var headerEl  = document.getElementById('popup-pop-header');
+  var ctaEl     = document.getElementById('popup-pop-cta');
+  var modal     = document.getElementById('popup-pop-modal');
+  var promoEl   = document.getElementById('popup-pop-promo');
+  var promoCode = document.getElementById('popup-pop-promo-code');
+  var copyBtn   = document.getElementById('popup-pop-copy');
+  var copyLabel = document.getElementById('popup-pop-copy-label');
 
   function show() { overlay.style.display = 'flex'; sessionStorage.setItem(KEY, '1'); }
   function hide() { overlay.style.display = 'none'; }
@@ -193,6 +277,30 @@
   ctaEl.onclick    = function() { hide(); };
   overlay.onclick  = function(e) { if (e.target === overlay) hide(); };
   document.addEventListener('keydown', function(e) { if (e.key === 'Escape') hide(); });
+
+  /* Copie du code promo */
+  copyBtn.onclick = function() {
+    var code = promoCode.textContent;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(code).then(function() { showCopied(); });
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = code;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showCopied();
+    }
+  };
+  function showCopied() {
+    copyBtn.classList.add('copied');
+    copyLabel.textContent = '✓ Copié !';
+    setTimeout(function() {
+      copyBtn.classList.remove('copied');
+      copyLabel.textContent = 'Copier';
+    }, 2000);
+  }
 
   fetch(appUrl + '/api/popup-settings?shop=' + shop)
     .then(function(r) { return r.json(); })
@@ -203,6 +311,12 @@
       if (d.title)      titleEl.textContent = d.title;
       if (d.message)    msgEl.textContent   = d.message;
       if (d.buttonText) ctaEl.textContent   = d.buttonText;
+
+      /* Code promo optionnel */
+      if (d.promoCode) {
+        promoCode.textContent    = d.promoCode;
+        promoEl.style.display    = 'block';
+      }
 
       /* Typography */
       if (d.fontFamily && d.fontFamily !== 'inherit') {
@@ -236,12 +350,11 @@
         modal.classList.add('liquid-glass');
 
         if (d.glassGradient && d.colorStart && d.colorEnd) {
-          /* Gradient plein sur header ET bouton + effet glass par dessus, body/footer restent transparents */
-          var g = 'linear-gradient(135deg,' + d.colorStart + ' 0%,' + d.colorEnd + ' 100%)';
+          /* Gradient à ~55% opacité sur header ET bouton — translucide style Apple */
+          var g = 'linear-gradient(135deg,' + d.colorStart + '99 0%,' + d.colorEnd + '99 100%)';
           headerEl.classList.add('has-gradient');
           headerEl.style.background = g;
           ctaEl.style.background    = g;
-          /* Texte blanc sur gradient coloré */
           if (!d.titleColor) titleEl.style.color = '#fff';
         } else {
           /* Header blanc transparent, texte sombre */
