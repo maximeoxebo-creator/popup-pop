@@ -9,7 +9,6 @@ const corsHeaders = {
 };
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  // Handle preflight
   if (request.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
@@ -28,10 +27,19 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   }
 
   return json({
-    active: true,
-    title: settings.title,
-    message: settings.message,
-    colorStart: settings.colorStart,
-    colorEnd: settings.colorEnd,
+    active:       true,
+    title:        settings.title,
+    message:      settings.message,
+    buttonText:   settings.buttonText,
+    textAlign:    settings.textAlign,
+    titleSize:    settings.titleSize,
+    messageSize:  settings.messageSize,
+    titleColor:   settings.titleColor,
+    messageColor: settings.messageColor,
+    fontFamily:   settings.fontFamily,
+    liquidGlass:      settings.liquidGlass,
+    colorStart:       settings.colorStart,
+    colorEnd:         settings.colorEnd,
+    buttonTextColor:  settings.buttonTextColor,
   }, { headers: corsHeaders });
 };

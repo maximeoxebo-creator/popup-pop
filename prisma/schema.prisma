@@ -26,13 +26,45 @@ model Session {
 }
 
 model PopupSettings {
-  id          String   @id @default(cuid())
-  shop        String   @unique
-  title       String   @default("Welcome to our store!")
-  message     String   @default("Get 10% off your first order. Use code WELCOME10")
-  isActive    Boolean  @default(true)
-  colorStart  String   @default("#667eea")
-  colorEnd    String   @default("#764ba2")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(cuid())
+  shop         String   @unique
+  title        String   @default("Welcome to our store!")
+  message      String   @default("Get 10% off your first order. Use code WELCOME10")
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  colorStart   String   @default("#667eea")
+  colorEnd     String   @default("#764ba2")
+  buttonText   String   @default("Shop Now!")
+  messageSize  String   @default("16")
+  textAlign    String   @default("left")
+  titleSize    String   @default("22")
+  fontFamily   String   @default("inherit")
+  liquidGlass  Boolean  @default(false)
+  messageColor String   @default("#4a5568")
+  titleColor   String   @default("#ffffff")
+  buttonTextColor String?  @default("#ffffff")
+}
+
+model BannerSettings {
+  id               String   @id
+  shop             String   @unique
+  isActive         Boolean  @default(true)
+  position         String   @default("top")
+  bgColor          String   @default("#000000")
+  textColor        String   @default("#ffffff")
+  languages        String   @default("en,fr,es,de,it,pt,nl,ja,zh,ar")
+  showFlags        Boolean  @default(false)
+  autoRedirect     Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime
+  showBanner       Boolean  @default(false)
+  showFloating     Boolean  @default(false)
+  flagShape        String   @default("round")
+  plan             String   @default("free")
+  mobileBanner     Boolean  @default(false)
+  mobileFloating   Boolean  @default(false)
+  defaultLang      String   @default("en")
+  bannerText       String   @default("")
+  mobileBannerText String   @default("")
 }

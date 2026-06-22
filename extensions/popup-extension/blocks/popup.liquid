@@ -1,4 +1,4 @@
-{% comment %} popup-pop v5.3 {% endcomment %}
+{% comment %} popup-pop v5.8 {% endcomment %}
 <div id="popup-pop-overlay" data-app-url="https://popup-pop.vercel.app" data-popup-block="{{ block.id }}">
   <div id="popup-pop-modal">
     <button id="popup-pop-close" type="button" aria-label="Close">&#x2715;</button>
@@ -36,52 +36,128 @@
   #popup-pop-header {
     padding: 32px;
     background: linear-gradient(135deg, #667eea, #764ba2);
+    border-bottom: 1px solid rgba(0,0,0,0.08);
   }
-  #popup-pop-title { color:#fff; margin:0; font-size:22px; font-weight:700; }
-  #popup-pop-body  { padding: 24px 32px; }
-  #popup-pop-message { margin:0; color:#4a5568; font-size:16px; line-height:1.6; }
-  #popup-pop-footer { padding: 0 32px 32px; }
+  #popup-pop-title {
+    color: #fff;
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  #popup-pop-body {
+    padding: 24px 32px;
+    border-bottom: 1px solid rgba(0,0,0,0.07);
+  }
+  #popup-pop-message {
+    margin: 0;
+    color: #4a5568;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  #popup-pop-footer { padding: 20px 32px 28px; }
   #popup-pop-cta {
-    width:100%; padding:14px; border:0; border-radius:8px; cursor:pointer;
+    width: 100%; padding: 14px; border: 0; border-radius: 8px; cursor: pointer;
     background: linear-gradient(135deg, #667eea, #764ba2);
-    color:#fff; font-size:16px; font-weight:600;
+    color: #fff; font-size: 16px; font-weight: 600;
   }
   #popup-pop-close {
-    position:absolute; top:10px; right:14px;
-    background: rgba(255,255,255,0.25); border:0;
-    color:#fff; font-size:20px; cursor:pointer;
-    width:32px; height:32px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    z-index: 2147483647;
+    position: absolute; top: 10px; right: 14px;
+    background: rgba(255,255,255,0.25); border: 0;
+    color: #fff; font-size: 20px; cursor: pointer;
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10;
   }
   #popup-pop-close:hover { background: rgba(255,255,255,0.45); }
+
+  /* ── Liquid Glass — s'applique uniquement sur la modal, pas l'overlay ── */
+  #popup-pop-modal.liquid-glass {
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.45);
+    border-radius: 28px;
+    box-shadow:
+      0 0 0 0.5px rgba(255,255,255,0.20) inset,
+      0 2px 4px rgba(255,255,255,0.25) inset,
+      0 32px 80px rgba(0,0,0,0.35),
+      0 8px 24px rgba(0,0,0,0.15);
+  }
+  #popup-pop-modal.liquid-glass::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%, rgba(255,255,255,0.7) 30%,
+      rgba(255,255,255,0.9) 50%, rgba(255,255,255,0.7) 70%, transparent 100%);
+    z-index: 1;
+  }
+  #popup-pop-modal.liquid-glass::after {
+    content: ''; position: absolute; inset: 0; border-radius: 28px;
+    background: linear-gradient(145deg,
+      rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.09) 100%);
+    pointer-events: none; z-index: 0;
+  }
+  #popup-pop-modal.liquid-glass #popup-pop-header {
+    /* Par défaut transparent/blanc — peut être coloré via JS si gradient défini */
+    background: rgba(255,255,255,0.12);
+    border-bottom: 1px solid rgba(255,255,255,0.20);
+    position: relative; z-index: 2;
+  }
+  #popup-pop-modal.liquid-glass #popup-pop-body {
+    border-bottom: 1px solid rgba(255,255,255,0.16);
+    position: relative; z-index: 2;
+    background: transparent;
+  }
+  #popup-pop-modal.liquid-glass #popup-pop-footer {
+    position: relative; z-index: 2;
+    background: transparent;
+  }
+  #popup-pop-modal.liquid-glass #popup-pop-cta {
+    background: rgba(255,255,255,0.22);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.42); border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(255,255,255,0.30) inset, 0 4px 16px rgba(0,0,0,0.12);
+    transition: background 0.2s ease;
+    /* color héritée du JS (buttonTextColor) ou blanc par défaut */
+    color: #fff;
+  }
+  #popup-pop-modal.liquid-glass #popup-pop-cta:hover {
+    background: rgba(255,255,255,0.32);
+  }
+  #popup-pop-modal.liquid-glass #popup-pop-close {
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.35);
+  }
+
   @media(max-width:480px) {
     #popup-pop-header, #popup-pop-body, #popup-pop-footer { padding-left:20px; padding-right:20px; }
   }
 </style>
 
 <script>
-/* popup-pop-v5.3 */
+/* popup-pop-v5.8 */
 (function() {
   var overlay  = document.getElementById('popup-pop-overlay');
   if (!overlay) return;
 
-  var appUrl   = overlay.getAttribute('data-app-url') || 'https://popup-pop.vercel.app';
-  var KEY = 'popup_pop_shown_' + (overlay.getAttribute('data-popup-block') || 'default');
+  var appUrl = overlay.getAttribute('data-app-url') || 'https://popup-pop.vercel.app';
+  var KEY    = 'popup_pop_shown_' + (overlay.getAttribute('data-popup-block') || 'default');
   if (sessionStorage.getItem(KEY)) return;
-  var shop     = (window.Shopify && window.Shopify.shop) ? window.Shopify.shop : location.hostname;
-  var closeBtn = document.getElementById('popup-pop-close');
-  var ctaBtn   = document.getElementById('popup-pop-cta');
-  var titleEl  = document.getElementById('popup-pop-title');
-  var msgEl    = document.getElementById('popup-pop-message');
-  var headerEl = document.getElementById('popup-pop-header');
-  var ctaEl    = document.getElementById('popup-pop-cta');
+
+  var shop      = (window.Shopify && window.Shopify.shop) ? window.Shopify.shop : location.hostname;
+  var closeBtn  = document.getElementById('popup-pop-close');
+  var titleEl   = document.getElementById('popup-pop-title');
+  var msgEl     = document.getElementById('popup-pop-message');
+  var headerEl  = document.getElementById('popup-pop-header');
+  var ctaEl     = document.getElementById('popup-pop-cta');
+  var modal     = document.getElementById('popup-pop-modal');
 
   function show() { overlay.style.display = 'flex'; sessionStorage.setItem(KEY, '1'); }
   function hide() { overlay.style.display = 'none'; }
 
   closeBtn.onclick = function() { hide(); };
-  ctaBtn.onclick   = function() { hide(); };
+  ctaEl.onclick    = function() { hide(); };
   overlay.onclick  = function(e) { if (e.target === overlay) hide(); };
   document.addEventListener('keydown', function(e) { if (e.key === 'Escape') hide(); });
 
@@ -89,13 +165,68 @@
     .then(function(r) { return r.json(); })
     .then(function(d) {
       if (!d.active) return;
-      if (d.title)   titleEl.textContent = d.title;
-      if (d.message) msgEl.textContent   = d.message;
-      if (d.colorStart && d.colorEnd) {
-        var g = 'linear-gradient(135deg,' + d.colorStart + ',' + d.colorEnd + ')';
-        headerEl.style.background = g;
-        ctaEl.style.background    = g;
+
+      /* Content */
+      if (d.title)      titleEl.textContent = d.title;
+      if (d.message)    msgEl.textContent   = d.message;
+      if (d.buttonText) ctaEl.textContent   = d.buttonText;
+
+      /* Typography */
+      if (d.fontFamily && d.fontFamily !== 'inherit') {
+        var googleFonts = ['Inter','Playfair Display','Montserrat','Lato','Poppins'];
+        var fontName = googleFonts.find(function(f) { return d.fontFamily.indexOf(f) !== -1; });
+        if (fontName) {
+          var link = document.createElement('link');
+          link.rel  = 'stylesheet';
+          link.href = 'https://fonts.googleapis.com/css2?family=' + fontName.replace(/ /g, '+') + ':wght@400;600;700&display=swap';
+          document.head.appendChild(link);
+        }
+        modal.style.fontFamily   = d.fontFamily;
+        titleEl.style.fontFamily = d.fontFamily;
+        msgEl.style.fontFamily   = d.fontFamily;
+        ctaEl.style.fontFamily   = d.fontFamily;
       }
+
+      if (d.textAlign) {
+        titleEl.style.textAlign = d.textAlign;
+        msgEl.style.textAlign   = d.textAlign;
+      }
+      if (d.titleSize)   titleEl.style.fontSize = d.titleSize + 'px';
+      if (d.messageSize) msgEl.style.fontSize   = d.messageSize + 'px';
+
+      /* Text colors */
+      if (d.titleColor)   titleEl.style.color = d.titleColor;
+      if (d.messageColor) msgEl.style.color   = d.messageColor;
+
+      /* Liquid Glass — effet sur la modal uniquement, overlay reste sombre */
+      if (d.liquidGlass) {
+        /* NE PAS toucher l'overlay — il garde son fond sombre semi-transparent */
+        modal.classList.add('liquid-glass');
+
+        /* Header : gradient coloré seulement si l'utilisateur a défini des couleurs
+           Sinon reste blanc/transparent (défaut CSS ci-dessus) */
+        if (d.colorStart && d.colorEnd) {
+          headerEl.style.background =
+            'linear-gradient(135deg,' + d.colorStart + '33 0%,' + d.colorEnd + '33 100%)';
+        }
+        /* Couleurs texte par défaut en mode glass */
+        if (!d.titleColor)   titleEl.style.color = '#fff';
+        if (!d.messageColor) msgEl.style.color   = 'rgba(255,255,255,0.88)';
+
+      } else {
+        /* Mode normal : gradient plein sur header et bouton */
+        if (d.colorStart && d.colorEnd) {
+          var g = 'linear-gradient(135deg,' + d.colorStart + ',' + d.colorEnd + ')';
+          headerEl.style.background = g;
+          ctaEl.style.background    = g;
+        }
+      }
+
+      /* Couleur texte du bouton (option indépendante) */
+      if (d.buttonTextColor) {
+        ctaEl.style.color = d.buttonTextColor;
+      }
+
       setTimeout(show, 1200);
     })
     .catch(function() { setTimeout(show, 1200); });
