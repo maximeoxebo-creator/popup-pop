@@ -26,21 +26,22 @@
 </div>
 
 <style>
+  /* Overlay standard */
   #popup-pop-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.55);
     z-index: 2147483647;
     align-items: center;
     justify-content: center;
   }
 
-  /* Overlay liquid glass : quasi invisible */
+  /* Overlay liquid glass : fond flouté lisible */
   #popup-pop-overlay.liquid-glass {
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
+    background: rgba(0,0,0,0.25);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
   }
 
   #popup-pop-modal {
@@ -93,7 +94,7 @@
 
   /* La modal entière : ultra transparente, fort blur comme iOS */
   #popup-pop-modal.liquid-glass {
-    background: rgba(255,255,255,0.52);
+    background: rgba(255,255,255,0.22);
     backdrop-filter: blur(60px) saturate(240%) brightness(1.15);
     -webkit-backdrop-filter: blur(60px) saturate(240%) brightness(1.15);
     border: 1px solid rgba(255,255,255,0.55);
@@ -142,15 +143,15 @@
     /* background appliqué en JS avec opacité réduite via hex alpha */
   }
 
-  /* Body : légèrement opacifié pour lisibilité */
+  /* Body : transparent liquid glass */
   #popup-pop-modal.liquid-glass #popup-pop-body {
-    background: rgba(255,255,255,0.38);
+    background: rgba(255,255,255,0.08);
     border-bottom: none;
     position: relative; z-index: 2;
   }
 
   #popup-pop-modal.liquid-glass #popup-pop-footer {
-    background: rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.06);
     border-radius: 0 0 28px 28px;
     position: relative; z-index: 2;
   }
@@ -190,57 +191,63 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border: 1.5px dashed rgba(0,0,0,0.18);
+    border: 1.5px dashed rgba(0,0,0,0.20);
     border-radius: 10px;
-    padding: 10px 14px;
-    background: rgba(0,0,0,0.03);
+    padding: 12px 16px;
+    background: rgba(0,0,0,0.04);
     gap: 12px;
   }
   #popup-pop-promo-code {
-    font-size: 17px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.10em;
     color: #1a1a2e;
-    font-family: 'Courier New', monospace;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Helvetica Neue', Arial, sans-serif;
     flex: 1;
     text-align: center;
   }
   #popup-pop-copy {
-    display: flex;
+    display: flex !important;
     align-items: center;
     gap: 6px;
-    padding: 6px 12px;
-    border: 1px solid rgba(0,0,0,0.15);
-    border-radius: 7px;
-    background: rgba(255,255,255,0.70);
+    padding: 8px 14px;
+    border: 1.5px solid rgba(0,0,0,0.20);
+    border-radius: 8px;
+    background: #fff;
     cursor: pointer;
     font-size: 13px;
-    font-weight: 600;
-    color: #333;
+    font-weight: 700;
+    color: #1a1a2e;
     white-space: nowrap;
     transition: background 0.15s ease, transform 0.1s ease;
     flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   }
-  #popup-pop-copy:hover { background: rgba(255,255,255,0.95); }
+  #popup-pop-copy:hover { background: #f0f0f0; }
   #popup-pop-copy:active { transform: scale(0.96); }
   #popup-pop-copy.copied {
     color: #16a34a;
-    border-color: rgba(22,163,74,0.35);
+    border-color: rgba(22,163,74,0.40);
     background: rgba(22,163,74,0.08);
   }
 
   /* Adaptation glass mode */
   #popup-pop-modal.liquid-glass #popup-pop-promo-inner {
-    border-color: rgba(255,255,255,0.45);
-    background: rgba(255,255,255,0.20);
+    border-color: rgba(255,255,255,0.50);
+    background: rgba(255,255,255,0.22);
+  }
+  #popup-pop-modal.liquid-glass #popup-pop-promo-code {
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
   }
   #popup-pop-modal.liquid-glass #popup-pop-copy {
-    background: rgba(255,255,255,0.35);
-    border-color: rgba(255,255,255,0.60);
+    background: rgba(255,255,255,0.45);
+    border-color: rgba(255,255,255,0.70);
     color: #1a1a2e;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.80) inset;
   }
   #popup-pop-modal.liquid-glass #popup-pop-copy:hover {
-    background: rgba(255,255,255,0.55);
+    background: rgba(255,255,255,0.65);
   }
 
   @media(max-width:480px) {
@@ -350,15 +357,15 @@
         modal.classList.add('liquid-glass');
 
         if (d.glassGradient && d.colorStart && d.colorEnd) {
-          /* Gradient à ~55% opacité sur header ET bouton — translucide style Apple */
           var g = 'linear-gradient(135deg,' + d.colorStart + '99 0%,' + d.colorEnd + '99 100%)';
           headerEl.classList.add('has-gradient');
           headerEl.style.background = g;
           ctaEl.style.background    = g;
           if (!d.titleColor) titleEl.style.color = '#fff';
+          closeBtn.style.color = d.titleColor || '#fff';
         } else {
-          /* Header blanc transparent, texte sombre */
           if (!d.titleColor) titleEl.style.color = '#1a1a2e';
+          closeBtn.style.color = d.titleColor || '#1a1a2e';
         }
 
         if (!d.messageColor) msgEl.style.color = '#2d3748';
