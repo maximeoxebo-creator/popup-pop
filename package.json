@@ -18,7 +18,7 @@
   },
   "type": "module",
   "engines": {
-    "node": ">=18.20.0 <21"
+    "node": "24.x"
   },
   "dependencies": {
     "@prisma/client": "^5.19.0",
@@ -36,7 +36,7 @@
   "devDependencies": {
     "@remix-run/dev": "^2.13.1",
     "@shopify/api-codegen-preset": "^1.1.1",
-    "@types/node": "^20.0.0",
+    "@types/node": "^24.0.0",
     "@types/react": "^18.2.31",
     "@types/react-dom": "^18.2.14",
     "prisma": "^5.19.0",
