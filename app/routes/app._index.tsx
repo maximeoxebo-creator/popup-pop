@@ -6,7 +6,7 @@ import {
   BlockStack, Text, Badge, InlineStack, Divider, Select, RangeSlider, Checkbox,
 } from "@shopify/polaris";
 import { authenticate } from "~/shopify.server";
-import prisma from "~/db.server";
+import prisma, { withDbRetry } from "~/db.server";
 import { useState, useCallback } from "react";
 
 const TEXT_ALIGN_OPTIONS = [
@@ -67,8 +67,14 @@ function ColorField({
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session } = await authenticate.admin(request);
   const shop = session.shop;
-  let settings = await prisma.popupSettings.findUnique({ where: { shop } });
-  if (!settings) settings = await prisma.popupSettings.create({ data: { shop } });
+  let settings = await withDbRetry(() =>
+    prisma.popupSettings.findUnique({ where: { shop } })
+  );
+  if (!settings) {
+    settings = await withDbRetry(() =>
+      prisma.popupSettings.create({ data: { shop } })
+    );
+  }
   return json({ settings });
 };
 
@@ -77,46 +83,48 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const shop = session.shop;
   const formData = await request.formData();
 
-  await prisma.popupSettings.upsert({
-    where: { shop },
-    update: {
-      title:        formData.get("title") as string,
-      message:      formData.get("message") as string,
-      buttonText:   formData.get("buttonText") as string,
-      textAlign:    formData.get("textAlign") as string,
-      titleSize:    formData.get("titleSize") as string,
-      messageSize:  formData.get("messageSize") as string,
-      titleColor:   formData.get("titleColor") as string,
-      messageColor: formData.get("messageColor") as string,
-      fontFamily:   formData.get("fontFamily") as string,
-      liquidGlass:      formData.get("liquidGlass") === "true",
-      glassGradient:    formData.get("glassGradient") === "true",
-      promoCode:        formData.get("promoCode") as string,
-      isActive:         formData.get("isActive") === "true",
-      colorStart:       formData.get("colorStart") as string,
-      colorEnd:         formData.get("colorEnd") as string,
-      buttonTextColor:  formData.get("buttonTextColor") as string,
-    },
-    create: {
-      shop,
-      title:            formData.get("title") as string,
-      message:          formData.get("message") as string,
-      buttonText:       formData.get("buttonText") as string,
-      textAlign:        formData.get("textAlign") as string,
-      titleSize:        formData.get("titleSize") as string,
-      messageSize:      formData.get("messageSize") as string,
-      titleColor:       formData.get("titleColor") as string,
-      messageColor:     formData.get("messageColor") as string,
-      fontFamily:       formData.get("fontFamily") as string,
-      liquidGlass:      formData.get("liquidGlass") === "true",
-      glassGradient:    formData.get("glassGradient") === "true",
-      promoCode:        formData.get("promoCode") as string,
-      isActive:         formData.get("isActive") === "true",
-      colorStart:       formData.get("colorStart") as string,
-      colorEnd:         formData.get("colorEnd") as string,
-      buttonTextColor:  formData.get("buttonTextColor") as string,
-    },
-  });
+  await withDbRetry(() =>
+    prisma.popupSettings.upsert({
+      where: { shop },
+      update: {
+        title:        formData.get("title") as string,
+        message:      formData.get("message") as string,
+        buttonText:   formData.get("buttonText") as string,
+        textAlign:    formData.get("textAlign") as string,
+        titleSize:    formData.get("titleSize") as string,
+        messageSize:  formData.get("messageSize") as string,
+        titleColor:   formData.get("titleColor") as string,
+        messageColor: formData.get("messageColor") as string,
+        fontFamily:   formData.get("fontFamily") as string,
+        liquidGlass:      formData.get("liquidGlass") === "true",
+        glassGradient:    formData.get("glassGradient") === "true",
+        promoCode:        formData.get("promoCode") as string,
+        isActive:         formData.get("isActive") === "true",
+        colorStart:       formData.get("colorStart") as string,
+        colorEnd:         formData.get("colorEnd") as string,
+        buttonTextColor:  formData.get("buttonTextColor") as string,
+      },
+      create: {
+        shop,
+        title:            formData.get("title") as string,
+        message:          formData.get("message") as string,
+        buttonText:       formData.get("buttonText") as string,
+        textAlign:        formData.get("textAlign") as string,
+        titleSize:        formData.get("titleSize") as string,
+        messageSize:      formData.get("messageSize") as string,
+        titleColor:       formData.get("titleColor") as string,
+        messageColor:     formData.get("messageColor") as string,
+        fontFamily:       formData.get("fontFamily") as string,
+        liquidGlass:      formData.get("liquidGlass") === "true",
+        glassGradient:    formData.get("glassGradient") === "true",
+        promoCode:        formData.get("promoCode") as string,
+        isActive:         formData.get("isActive") === "true",
+        colorStart:       formData.get("colorStart") as string,
+        colorEnd:         formData.get("colorEnd") as string,
+        buttonTextColor:  formData.get("buttonTextColor") as string,
+      },
+    })
+  );
 
   return json({ success: true });
 };

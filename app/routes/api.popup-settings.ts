@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import prisma from "~/db.server";
+import prisma, { withDbRetry } from "~/db.server";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -20,7 +20,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return json({ error: "Shop required" }, { status: 400, headers: corsHeaders });
   }
 
-  const settings = await prisma.popupSettings.findUnique({ where: { shop } });
+  // Route appelée par le storefront : c'est souvent elle qui tombe sur une base
+  // endormie, aucune session Shopify n'ayant réveillé Neon en amont.
+  const settings = await withDbRetry(() =>
+    prisma.popupSettings.findUnique({ where: { shop } })
+  );
 
   if (!settings || !settings.isActive) {
     return json({ active: false }, { headers: corsHeaders });

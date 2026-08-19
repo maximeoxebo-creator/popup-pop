@@ -14,7 +14,15 @@ const shopify = shopifyApp({
   scopes: [],
   appUrl: process.env.SHOPIFY_APP_URL || "",
   authPathPrefix: "/auth",
-  sessionStorage: new PrismaSessionStorage(prisma),
+  // connectionRetries/connectionRetryIntervalMs par défaut (2 tentatives, 5 s) sont
+  // trop courts face au cold-start de Neon (mise en veille sur le plan gratuit) : ce
+  // test de connexion est mis en cache pour toute la durée de vie de la fonction
+  // serverless, donc un échec pendant le réveil de la base reste figé et fait planter
+  // toutes les requêtes suivantes sur cette instance jusqu'à son recyclage par Vercel.
+  sessionStorage: new PrismaSessionStorage(prisma, {
+    connectionRetries: 5,
+    connectionRetryIntervalMs: 3000,
+  }),
   distribution: AppDistribution.AppStore,
   future: {
     unstable_newEmbeddedAuthStrategy: true,

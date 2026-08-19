@@ -6,7 +6,7 @@ import { AppProvider } from "@shopify/shopify-app-remix/react";
 import { NavMenu } from "@shopify/app-bridge-react";
 import polarisStyles from "@shopify/polaris/build/esm/styles.css?url";
 import shopify from "~/shopify.server";
-import prisma from "~/db.server";
+import prisma, { withDbRetry } from "~/db.server";
 
 export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
 
@@ -19,9 +19,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   // Vérifier si le marchand a déjà des settings en DB
   // Si non → première visite → rediriger vers la page de pricing
-  const settings = await prisma.popupSettings.findUnique({
-    where: { shop },
-  });
+  const settings = await withDbRetry(() =>
+    prisma.popupSettings.findUnique({ where: { shop } })
+  );
 
   if (!settings) {
     return redirect(
