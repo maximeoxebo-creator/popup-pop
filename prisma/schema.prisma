@@ -48,25 +48,18 @@ model PopupSettings {
   promoCode        String?  @default("")
 }
 
-model BannerSettings {
-  id               String   @id
-  shop             String   @unique
-  isActive         Boolean  @default(true)
-  position         String   @default("top")
-  bgColor          String   @default("#000000")
-  textColor        String   @default("#ffffff")
-  languages        String   @default("en,fr,es,de,it,pt,nl,ja,zh,ar")
-  showFlags        Boolean  @default(false)
-  autoRedirect     Boolean  @default(false)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime
-  showBanner       Boolean  @default(false)
-  showFloating     Boolean  @default(false)
-  flagShape        String   @default("round")
-  plan             String   @default("free")
-  mobileBanner     Boolean  @default(false)
-  mobileFloating   Boolean  @default(false)
-  defaultLang      String   @default("en")
-  bannerText       String   @default("")
-  mobileBannerText String   @default("")
-}
+// ⚠️ Le modèle `BannerSettings` a été retiré d'ici le 2026-08-20.
+//
+// Il n'a jamais été créé par une migration de popup-pop : il est arrivé par
+// un `prisma db pull` sur une base Neon qui hébergeait aussi la table de
+// LinguaBar. Aucun code de cette app ne le référençait.
+//
+// Le retirer du schéma ne touche à aucune base — ça supprime seulement
+// l'accesseur `prisma.bannerSettings` du client généré, donc tout risque
+// que popup-pop lise ou écrive dans les données de LinguaBar.
+//
+// NE JAMAIS lancer `prisma migrate dev` sur ce projet sans lire le SQL
+// proposé : Prisma verra la table comme un écart et proposera un
+// `DROP TABLE "BannerSettings"`. Si la base est partagée avec LinguaBar,
+// cela détruirait ses données en production. `prisma migrate deploy`, lui,
+// ne rejoue que les migrations existantes et reste sans danger.
