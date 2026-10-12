@@ -3,7 +3,7 @@
   if (!overlay) return;
 
   var KEY = 'popup_pop_shown_' + overlay.getAttribute('data-popup-block');
-  var appUrl = overlay.getAttribute('data-app-url') || 'https://popup-pop.vercel.app';
+  var appUrl = overlay.getAttribute('data-app-url') || 'https://popup-pop.zeppelin-apps.com';
   var shop = window.Shopify && window.Shopify.shop ? window.Shopify.shop : location.hostname;
 
   var closeBtn = document.getElementById('popup-pop-close');

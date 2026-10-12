@@ -10,10 +10,10 @@ App Shopify embedded (Remix + Prisma + Vercel) qui affiche un popup personnalisa
 1. Va sur **https://partners.shopify.com**
 2. Clique **Apps** → **Créer une app** → **Créer manuellement**
 3. Nom : `popup-pop`
-4. URL de l'app : `https://popup-pop.vercel.app`
+4. URL de l'app : `https://popup-pop.zeppelin-apps.com`
 5. URL de redirection autorisées :
-   - `https://popup-pop.vercel.app/auth/callback`
-   - `https://popup-pop.vercel.app/auth`
+   - `https://popup-pop.zeppelin-apps.com/auth/callback`
+   - `https://popup-pop.zeppelin-apps.com/auth`
 6. Clique **Créer**
 7. Note le **Client ID** et le **Secret API** → tu en as besoin pour les étapes suivantes
 
@@ -38,7 +38,7 @@ App Shopify embedded (Remix + Prisma + Vercel) qui affiche un popup personnalisa
 |---|---|
 | `SHOPIFY_API_KEY` | Ton Client ID (étape 1) |
 | `SHOPIFY_API_SECRET` | Ton Secret API (étape 1) |
-| `SHOPIFY_APP_URL` | `https://popup-pop.vercel.app` |
+| `SHOPIFY_APP_URL` | `https://popup-pop.zeppelin-apps.com` |
 | `SCOPES` | `write_products,write_metaobjects,write_metaobject_definitions` |
 | `DATABASE_URL` | Ta DATABASE_URL PostgreSQL (étape 2) |
 

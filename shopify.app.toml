@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "36258e9b96319d13c87a537487b91859"
-application_url = "https://popup-pop.vercel.app/app"
+application_url = "https://popup-pop.zeppelin-apps.com/app"
 embedded = true
 name = "popup-pop"
 
@@ -12,8 +12,8 @@ use_legacy_install_flow = false
 
 [auth]
 redirect_urls = [
-  "https://popup-pop.vercel.app/auth/callback",
-  "https://popup-pop.vercel.app/auth"
+  "https://popup-pop.zeppelin-apps.com/auth/callback",
+  "https://popup-pop.zeppelin-apps.com/auth"
 ]
 
 [webhooks]
@@ -21,8 +21,8 @@ api_version = "2026-04"
 
 [[webhooks.subscriptions]]
 topics = ["app/uninstalled"]
-uri = "https://popup-pop.vercel.app/webhooks"
+uri = "https://popup-pop.zeppelin-apps.com/webhooks"
 
 [[webhooks.subscriptions]]
 compliance_topics = ["customers/data_request", "customers/redact", "shop/redact"]
-uri = "https://popup-pop.vercel.app/webhooks"
+uri = "https://popup-pop.zeppelin-apps.com/webhooks"
